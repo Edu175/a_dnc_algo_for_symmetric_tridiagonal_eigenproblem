@@ -1,11 +1,12 @@
 import numpy as np
+from np import float128 as f128
 from givens import givens_rot
 
 def diag(T):
     N,_=T.shape
 
 def _ZEROS(N,M):
-    return np.zeros((N,M),dtype=np.float128)
+    return np.zeros((N,M),dtype=f128)
 
 def rotate(L):#O(n)
     L=L[1:]+L[:1]
@@ -44,7 +45,7 @@ def defl(H,Q,P,tol): #O(n^2)
             
             assert(np.allclose(H,H2,rtol=tol,atol=tol))
 
-            G=np.array([[c,s],[-s,c]],dtype=np.float128)
+            G=np.array([[c,s],[-s,c]],dtype=f128)
             
             Q[:,[P[i],P[i+1]]]=Q[:,[P[i],P[i+1]]]@G.T
 
@@ -117,9 +118,9 @@ def SimTridiag(T,tol):
                 return False
     return True
 
-def DnC_SimTridiag(_T, dfl_tol=np.float128(1e-9)):
+def DnC_SimTridiag(_T, dfl_tol=f128(1e-9)):
     T=np.copy(_T)
-    T.dtype=np.float128
+    T.dtype=f128
     (N,M)=T.shape
     if(N!=M):
         print("Error: T no es cuadrada")

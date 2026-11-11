@@ -1,8 +1,8 @@
 from numpy import sqrt
 from numpy import sign
-from numpy import flaot128
+from numpy import f128
 
-EPS=float128(10)**-10
+EPS=f128(10)**-10
 
 def givens_rot(a,b):
     if abs(b)<=EPS:
