@@ -1,9 +1,12 @@
 import numpy as np
 from np import float128 as f128
-from givens import givens_rot
-
+from jacobi22 import jacobi22
 def diag(T):
-    N,_=T.shape
+    n,_ = T.shape
+    if n==1 : return T,np.eye(f128(1))
+    c,s= jacobi22(T)
+    Q=np.array([[c,-s],[s,c]],dtype=f128)
+    return Q.T@T@Q, Q
 
 def _ZEROS(N,M):
     return np.zeros((N,M),dtype=f128)
@@ -11,13 +14,14 @@ def _ZEROS(N,M):
 def rotate(L):#O(n)
     L=L[1:]+L[:1]
 
-def defl(H,Q,P,tol): #O(n^2)
+def defl(H,Q,tol): #O(n^2)
     N,_=H.shape
+    P=[i for i in range(N)]
+    P[1:N].sort(key=lambda i: H[i,i])
     eta=min(1/(100*N),tol)
     tau=6*eta*N**2
     delt=tau*np.linalg.norm(H,ord=2)
     ND=0
-    P[1:N].sort(key=lambda i: H[i,i])
     i=1
     while i<N-ND :
         if abs(H[P[0],P[i]])<delt: 
@@ -52,13 +56,59 @@ def defl(H,Q,P,tol): #O(n^2)
             rotate(P[i+1:N-ND])
             ND+=1
         else: i+=1
-    return ND
+    #H=[_H,  0]
+    #  [0 , _L]
+    X=np.copy(Q)
+    _H=_ZEROS(N-ND,N-ND)
+    _L=_ZEROS(ND,ND)
+    for i in range(N-ND):
+        _H[i,i]=H[P[i],P[i]]
+        _H[0,i]=H[P[0],P[i]]
+        _H[i,0]=_H[0,i]
+    for i in range(N-ND,N):
+        _L[i,i]=H[P[i],P[i]]
+    for i in range(N):
+        for j in range(N): Q[i,j]=X[P[i],P[j]]
 
+    return _H,_L
 
-def FMM_autovalores(H,P):
-    return "sorry"
+def FMM_autovalores(H,):
+    rt,_ =np.linalg.eig(H)
+    return rt.sort()
 
-        
+def PHI1(ls,z,ds,qs):
+    n=ls.len
+    rt=[f128(0)]*n
+    ev =lambda i, j : z[j]*qs[j+1]/(ds[j]-ls[i])
+    for i in range(0,n):
+        L=f128(0)
+        R=f128(0)
+        for j in range(0,n-1):
+            if ds[j]<ls[i] : L+=ev(i,j)
+            else: R+=ev(i,j)
+        rt[i]=L+R
+    return rt
+
+def PHI2(ls,z,ds):
+    n=ls.len
+    rt=[f128(0)]*n
+    ev =lambda i, j : (z[j]/(ds[j]-ls[i]))**2
+    for i in range(0,n):
+        for j in range(0,n-1):
+            rt[i]+=ev(i,j)
+    return rt
+
+def PHI3(i,ls,ds,zi): #O(n^2) 
+    n=ls.len
+    if(i>=n or i<0): return 0.
+    rt=(ds[i]-ls[0])*(ls[-1]-ds[i])
+    for j in range(0,i):
+        rt*=(ds[i]-ls[j+1])/(ds[i]-ds[j])
+    for j in range(i,n-1):
+        rt*=(ls[j+1]-ds[i])/(ds[j+1]-ds[i])
+    rt=np.sqrt(rt)
+    return rt if zi>=0 else -rt
+
 def _DnC_ST(T,tol):
     N,_=T.shape
     if(N<=2):
@@ -71,8 +121,8 @@ def _DnC_ST(T,tol):
     bk2=T[k,k+1]
     T2=T[k+1:,k+1:] # N-k-1 x N-k-1
 
-    D1,Q1,P1=_DnC_ST(T1,tol)
-    D2,Q2,P2=_DnC_ST(T2,tol)
+    D1,Q1=_DnC_ST(T1,tol)
+    D2,Q2=_DnC_ST(T2,tol)
     l1=Q1[-1,:]*bk1
     f2=Q2[0,:]*bk2
 
@@ -86,27 +136,28 @@ def _DnC_ST(T,tol):
                 [      np.eye(1),     _ZEROS(1,k), _ZEROS(1,N-k-1)],
                 [_ZEROS(N-k-1,1), _ZEROS(N-k-1,k),              Q2]
                 ])
-    P=[0]+[1+i for i in P1]+[1+len(P1)+i for i in P2]
     
-    ND=defl(H,Q,P,tol)
+    _H, _L=defl(H,Q,tol)
+    N,_=_H.shape
+    ND,_= _L.shape
 
-    ls=FMM_autovalores(H,P[:N-ND],tol)
-    ds=[H[P[i],P[i]] for i in range(1,N-ND)]
+    ls=FMM_autovalores(_H)
+    ds=[_H[i,i] for i in range(1,N)]
 
-    z=[PHI3(i,ls,ds) for i in range(1,N)]  #\sum O(n^2*N/n)=O(N^2)
-
-
+    z=[PHI3(i,ls,ds,_H[0,i]) for i in range(N-1)]  #\sum O(n^2*N/n)=O(N^2)
+    
     for i in range(N):
-        qs=[Q[P[i],P[j]] for j in range(1,N-ND)]
+        qs=np.copy(Q[i,:])
         vs1=PHI1(ls,z,ds,qs)
         vs2=PHI2(ls,z,ds)
-        for j in range(N-ND):
-            Q[P[i],P[j]]=(-qs[0]+vs1[j])/np.sqrt(1+vs2[j])
-    H[:N-ND,:N-ND]=np.diag(ls)
-
-    return H,Q,P
+        for j in range(N):
+            Q[i,j]=(-qs[0]+vs1[j])/np.sqrt(1+vs2[j])
+    for i in range(N-ND):
+        H[0,i],H[i,0]=0,0
+        H[i,i]=ls[i]
     
-
+    return H,Q
+    
 
 def SimTridiag(T,tol):
     N,_=T.shape
@@ -129,3 +180,7 @@ def DnC_SimTridiag(_T, dfl_tol=f128(1e-9)):
         print("Error: T no es simétrica tridiagonal")
         return T
     return _DnC_ST(_T,dfl_tol)
+
+
+
+
