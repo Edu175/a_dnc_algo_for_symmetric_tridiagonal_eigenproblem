@@ -1,5 +1,5 @@
 import numpy as np
-from ..practicos.givens import givens_rot
+from givens import givens_rot
 
 def diag(T):
     N,_=T.shape
