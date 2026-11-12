@@ -9,5 +9,5 @@ def jacobi22(A):
     if(tau>=0): t=-1/(tau+sqrt(tau**2+1))
     else: t=1/(-tau+sqrt(tau**2+1))
     c=1/sqrt(1+t**2)
-    s=t*s
+    s=t*c
     return c,s
