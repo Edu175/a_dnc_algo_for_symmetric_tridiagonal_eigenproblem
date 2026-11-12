@@ -14,7 +14,7 @@ def _ZEROS(N,M):
 def rotate(L):#O(n)
     L=L[1:]+L[:1]
 
-def defl(H,Q,tol): #O(n^2)
+def deflation(H,Q,tol): #O(n^2)
     N,_=H.shape
     P=[i for i in range(N)]
     P[1:N].sort(key=lambda i: H[i,i])
@@ -72,7 +72,7 @@ def defl(H,Q,tol): #O(n^2)
 
     return _H,_L
 
-def FMM_autovalores(H,):
+def np_autovalores(H,):
     rt,_ =np.linalg.eig(H)
     rt.sort()
     return rt
@@ -124,9 +124,9 @@ def _DnC_ST(T,tol):
 
     D1,Q1=_DnC_ST(T1,tol)
     D2,Q2=_DnC_ST(T2,tol)
-    l1=Q1[[-1],:]*bk1
-    f2=Q2[[0],:]*bk2
-    
+    l1=np.copy(Q1[[-1],:]).T*bk1
+    f2=np.copy(Q2[[0],:]).T*bk2
+
 
     H=np.block([
                 [a,            l1.T,            f2.T],
@@ -139,11 +139,11 @@ def _DnC_ST(T,tol):
                 [_ZEROS(N-k-1,1), _ZEROS(N-k-1,k),              Q2]
                 ])
     
-    _H, _L=defl(H,Q,tol)
+    _H, _L=deflation(H,Q,tol)
     N,_=_H.shape
     ND,_= _L.shape
 
-    ls=FMM_autovalores(_H)
+    ls=np_autovalores(_H)
     ds=[_H[i,i] for i in range(1,N)]
 
     z=[PHI3(i,ls,ds,_H[0,i+1]) for i in range(N-1)]  #\sum O(n^2*N/n)=O(N^2)
@@ -183,10 +183,6 @@ def DnC_SimTridiag(_T, dfl_tol=f128(1e-9)):
     return _DnC_ST(_T,dfl_tol)
 
 
-A=np.array([[2,-1,0],[-1,3,5],[0,5,1]],dtype=f128)
 
-L,X=DnC_SimTridiag(A)
 
-print(X@L@X.T)
-print(A)
-assert(np.allclose(A,X@L@X.T,rtol=f128(1e-9),atol=f128(1e-9)))
+
