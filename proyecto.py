@@ -91,14 +91,15 @@ def _DnC_ST(T,tol):
     for i in range(N):
         qs=np.copy(Q[i,:])
         vs1=PHI1(ls,z,ds,qs)
-        vs2=PHI2(ls,z,ds)
+        vs2=PHI2(ls,z,ds) 
         for j in range(N):
             Q[i,j]=(-qs[0]+vs1[j])/np.sqrt(1+vs2[j])
-    H=np.block([
+
+    D=np.block([
         [np.diagflat(ls), _ZEROS(N,ND)],
         [_ZEROS(ND,N)   ,           _L]
     ])
-    return H,Q
+    return D,Q
     
 
 def SimTridiag(T,tol):
