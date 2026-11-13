@@ -8,6 +8,7 @@ def mk_SimTridiag(D,OD):
     N,_=T.shape
     for i in range(N-1):
         T[i,i+1],T[i+1,i]=OD[i],OD[i]
+    assert(T.dtype==f128)
     return T
 
 def Wilkinson_matrix(N): #W+_N=[1,w_i,1], w_i=|(N+1)/2-i| para i=1 ... N
