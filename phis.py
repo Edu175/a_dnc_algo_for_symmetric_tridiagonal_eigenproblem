@@ -1,5 +1,6 @@
 import numpy as np
 from numpy import float128 as f128
+
 def eval_suma(_terms): # dnc (or binary tree) sum for better precision
 	return np.sum(np.array(_terms),dtype=f128) # it does the same
 	if not(len(_terms)): return 0
@@ -10,6 +11,7 @@ def eval_suma(_terms): # dnc (or binary tree) sum for better precision
 		b=terms[p]; p+=1
 		terms.append(a+b)
 	return terms[p]
+
 def eval_prod(_terms): # dnc (or binary tree) prod for better precision
 	# return np.prod(np.array(_terms),dtype=f128) # im not sure if it does the same
 	if not(len(_terms)): return 1
@@ -20,6 +22,7 @@ def eval_prod(_terms): # dnc (or binary tree) prod for better precision
 		b=terms[p]; p+=1
 		terms.append(a*b)
 	return terms[p]
+
 def phi_bisec(mu, delt, z):
 	n= z.shape[0]
 	return eval_suma([(z[i]**2)/(delt[i]-mu) for i in range(n)])

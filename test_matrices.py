@@ -45,11 +45,11 @@ for N in [128,256,512]:
 for N in [129,257,513]:
     msg='Wilkinson '+str(N)+'x'+str(N)
     test_matrix(Wilkinson_matrix(N),msg=msg,ignorePrint=True)
-'''
+
 for N in [125,275,525]:
     msg='Wilkinson pegadas '+str(N)+'x'+str(N)
     test_matrix(glued_Wilkinson_matrix(N,f128(10)**-14),msg=msg,ignorePrint=True)
-# '''
+
 for N in [128,256,512]:
     msg='Toeplitz '+str(N)+'x'+str(N)
     test_matrix(Toeplitz_matrix(N),msg=msg,ignorePrint=True)

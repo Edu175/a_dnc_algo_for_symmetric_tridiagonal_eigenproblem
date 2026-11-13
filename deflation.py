@@ -1,4 +1,4 @@
-from numpy import array, copy, sqrt, zeros
+from numpy import array, copy, sqrt, zeros, log2
 from numpy import float128 as f128
 from norms import norm2
 def _ZEROS(N,M):
@@ -14,7 +14,7 @@ def deflation(H,Q,tol): #O(n^2)
     P[1:]=sorted(P[1:],key=lambda i: H[i,i])
     
     eta=min(1/(101*N),tol) # en [1], sec 3.3 pag 180., se asume eta*n<.01
-    tau=6*eta*N**2
+    tau=6*eta*N*(log2(N)+1)
     delt=tau*norm2(H,isArrow=True)
     ND=0
     i=1
