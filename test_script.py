@@ -66,7 +66,6 @@ def test_random(n,ignorePrint=False):
 	
 test_random(1,ignorePrint=True)
 test_random(1,ignorePrint=True)
-test_random(1,ignorePrint=True)
 test_random(28,ignorePrint=True)
 test_random(40,ignorePrint=True)
 test_random(50,ignorePrint=True)
