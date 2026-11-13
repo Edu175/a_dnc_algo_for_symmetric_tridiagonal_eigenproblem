@@ -1,5 +1,6 @@
 import numpy as np
 from numpy import float64 as f128
+from norms import norm2
 def _ZEROS(N,M):
     return np.zeros((N,M),dtype=f128)
 
@@ -14,7 +15,7 @@ def deflation(H,Q,tol): #O(n^2)
     
     eta=min(1/(100*N),tol)
     tau=6*eta*N**2
-    delt=tau*np.linalg.norm(H,ord=2)
+    delt=tau*norm2(H)
     ND=0
     i=1
     while i<N-ND :

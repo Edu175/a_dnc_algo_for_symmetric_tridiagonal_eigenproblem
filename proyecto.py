@@ -122,8 +122,3 @@ def DnC_SimTridiag(_T, dfl_tol=f128(1e-16)):
         print("Error: T no es simétrica tridiagonal")
         return T
     return _DnC_ST(_T,dfl_tol)
-
-
-
-
-
