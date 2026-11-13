@@ -64,7 +64,12 @@ test_matrix(np.array([
 def test_random(n,ignorePrint=False):
 	test_matrix(get_random_SimTridiag(n),str(n)+"x"+str(n),ignorePrint) # nxn
 	
+test_random(1,ignorePrint=True)
+test_random(1,ignorePrint=True)
+test_random(1,ignorePrint=True)
 test_random(28,ignorePrint=True)
-test_random(40)
-# test_random(50)
-# test_random(100)
+test_random(40,ignorePrint=True)
+test_random(50,ignorePrint=True)
+test_random(75,ignorePrint=True)
+test_random(90,ignorePrint=True)
+test_random(100,ignorePrint=True)
