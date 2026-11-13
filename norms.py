@@ -1,5 +1,5 @@
 from numpy import sqrt, random, inner, dot, nan
-from numpy import float64 as f128
+from numpy import float128 as f128
 
 
 # from scipy.sparse.linalg import svds
@@ -16,11 +16,10 @@ def vnorm2(v):
 def mnorm2(A):
     n,m=A.shape
     
-    v=random.uniform(f128(-1), f128(1), size=n)
-    v.dtype=f128
+    v=random.uniform(f128(-1), f128(1), size=n).astype(f128)
     v/=norm2(v)
 
-    ant=nan
+    ant=nan #siempre tira falso, tito-truco
     while True:
         u=dot(A.T,dot(A,v)) 
         lam=inner(v,u)

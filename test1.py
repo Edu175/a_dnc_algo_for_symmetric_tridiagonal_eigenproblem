@@ -1,5 +1,5 @@
 import numpy as np
-from numpy import float64 as f128
+from numpy import float128 as f128
 from proyecto import DnC_SimTridiag
 EPS=f128(1e-9)
 A=np.array([[2,-1,0],[-1,3,5],[0,5,1]],dtype=f128) #3x3

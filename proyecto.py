@@ -1,5 +1,5 @@
 import numpy as np
-from numpy import float64 as f128
+from numpy import float128 as f128
 from jacobi22 import jacobi22
 from deflation import deflation,_ZEROS
 from find_eigen import bisec_autovalores

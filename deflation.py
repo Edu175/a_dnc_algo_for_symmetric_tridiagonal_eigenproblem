@@ -1,5 +1,5 @@
 import numpy as np
-from numpy import float64 as f128
+from numpy import float128 as f128
 from norms import norm2
 def _ZEROS(N,M):
     return np.zeros((N,M),dtype=f128)
