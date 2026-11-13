@@ -1,9 +1,10 @@
-import numpy as np
+from numpy import array
+from numpy.linalg import eig
 from numpy import float128 as f128
 from norms import norm2
 
 def np_autovalores(H):
-    rt,_ =np.linalg.eig(H)
+    rt,_ =eig(H)
     rt.sort()
     return rt
 
@@ -20,7 +21,7 @@ def bisec_autovalores(H,tol,ds):
     z=H[0,1:]
     a=H[0,0]
     eta=min(1/(101*n),tol)
-    ls=np.array([f128(0)]*n)
+    ls=array([f128(0)]*n)
     for i in range(0,n):
         caso=0
         if i==0 or i==n-1:
