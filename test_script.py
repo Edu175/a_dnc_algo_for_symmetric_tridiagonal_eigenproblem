@@ -28,11 +28,11 @@ def test_matrix(A,msg="",ignorePrint=False):
 	# print("Estan cerca :D")
 	print("\n")
 
-def get_random_SimTridiag(n):
+def get_random_SimTridiag(n,Low=-100, High=100):
 	A=np.zeros((n,n),dtype=f128)
-	for i in range(n): A[i,i]=rng.uniform(low=-100,high=100)
+	for i in range(n): A[i,i]=rng.uniform(low=Low,high=High)
 	for i in range(1,n):
-		A[i-1,i]=A[i,i-1]=rng.uniform(low=-100,high=100)
+		A[i-1,i]=A[i,i-1]=rng.uniform(low=Low,high=High)
 	return A
 
 # test_matrix(np.array([[2,-1,0],[-1,3,5],[0,5,1]],dtype=f128),msg="3x3") #3x3
