@@ -20,7 +20,7 @@ def bisec_autovalores(H,tol,ds):
     n,_= H.shape
     z=H[0,1:]
     a=H[0,0]
-    eta=min(1/(101*n),tol) #en [1], sec 3.3 page 180., se asume eta*n<.01
+    eta=min(1/(101*n),tol) #en [1], sec 3.3 pag 180., se asume eta*n<.01
     ls=array([f128(0)]*n)
     delt=[f128(0)]*(n-1)
     n2z=norm2(z)

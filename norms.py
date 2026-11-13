@@ -32,4 +32,3 @@ def norm2(x):
     if(x.ndim==1): return vnorm2(x)
     return mnorm2(x)
     
-
