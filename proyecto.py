@@ -1,6 +1,8 @@
 import numpy as np
 from numpy import float64 as f128
 from jacobi22 import jacobi22
+from deflation import deflation,_ZEROS
+from norms import norm2
 def diag(T):
     n,_ = T.shape
     if n==1 : return T,np.eye(1,dtype=f128)
@@ -8,74 +10,64 @@ def diag(T):
     Q=np.array([[c,-s],[s,c]],dtype=f128)
     return Q.T@T@Q, Q
 
-def _ZEROS(N,M):
-    return np.zeros((N,M),dtype=f128)
-
-def rotate(L):#O(n)
-    L=L[1:]+L[:1]
-
-def deflation(H,Q,tol): #O(n^2)
-    N,_=H.shape
-    P=[i for i in range(N)]
-    P[1:N].sort(key=lambda i: H[i,i])
-    eta=min(1/(100*N),tol)
-    tau=6*eta*N**2
-    delt=tau*np.linalg.norm(H,ord=2)
-    ND=0
-    i=1
-    while i<N-ND :
-        if abs(H[P[0],P[i]])<delt: 
-            H[P[0],P[i]],H[P[0],P[i]]=0,0
-            rotate(P[i:N-ND])
-            ND+=1
-        
-        else: i+=1            
-    i=1     
-    while i<N-ND-1: 
-        if abs(H[P[i],P[i]]-H[P[i+1],P[i+1]])<delt:
-            zj=H[P[0],P[i]],zi=H[P[0],P[i+1]]
-            r=np.sqrt(zj**2+zi**2)
-            c=zj/r
-            s=zi/r
-            dj=H[P[i],P[i]]
-            di=H[P[i+1],P[i+1]]
-
-            H2=np.copy(H)
-            H[P[i],P[i]]=dj*c**2+di*s**2
-            H[P[i+1],P[i+1]]=dj*s**2+di*c**2
-            
-            H[P[0],P[i]],H[P[i],P[0]]=r,r
-            H[P[0],P[i+1]],H[P[i+1],P[0]]=0,0
-            
-            assert(np.allclose(H,H2,rtol=tol,atol=tol))
-
-            G=np.array([[c,s],[-s,c]],dtype=f128)
-            
-            Q[:,[P[i],P[i+1]]]=Q[:,[P[i],P[i+1]]]@G.T
-
-            rotate(P[i+1:N-ND])
-            ND+=1
-        else: i+=1
-    #H=[_H,  0]
-    #  [0 , _L]
-    X=np.copy(Q)
-    _H=_ZEROS(N-ND,N-ND)
-    _L=_ZEROS(ND,ND)
-    for i in range(N-ND):
-        _H[i,i]=H[P[i],P[i]]
-        _H[0,i]=H[P[0],P[i]]
-        _H[i,0]=_H[0,i]
-    for i in range(N-ND,N):
-        _L[i-(N-ND),i-(N-ND)]=H[P[i],P[i]]
-    for i in range(N):
-        for j in range(N): Q[i,j]=X[P[i],P[j]]
-
-    return _H,_L
-
-def np_autovalores(H,):
+def np_autovalores(H):
     rt,_ =np.linalg.eig(H)
     rt.sort()
     return rt
+
+def phi_bisec(mu, delt, z):
+    n= z.shape[0]
+    rt=f128(0)
+    for i in range(n):
+        rt+=(z[i]**2)/(delt[i]-mu)
+    return rt
+
+
+def bisec_autovalores(H,tol,ds):
+    n,_= H.shape
+    z=H[0,1:]
+    a=H[0,0]
+    eta=min(1/(101*n),tol)
+    ls=np.array([f128(0)]*n)
+    for i in range(0,n):
+        caso=0
+        if i==0 or i==n-1:
+            caso=(i!=0)
+        else:
+
+            mid=(ds[i-1]+ds[i])/2
+            fmid=mid-a+phi_bisec(mid,ds[:i],z[:i])+phi_bisec(mid,ds[i:],z[i:])
+            caso=(fmid>0)
+        
+        delt=[f128(0)]*(n-1)
+        for j in range(n-1):
+            delt[j]=ds[j]-ds[i-(caso)]
+        ai=ds[i-(caso)]-a
+        L=f128(0)
+        R=f128(0)
+        if(caso): 
+            if(i<n-1): R=delt[i]/2
+            else: R=norm2(z)+abs(i)
+        else: 
+            if i>0: L=delt[i-1]/2
+            else: L=-norm2(z)-abs(ai)
+
+        while True:
+            mu=(L+R)/2
+            psi=phi_bisec(mu,delt[:i],z[:i])
+            phi=phi_bisec(mu,delt[i:],z[i:])
+            gi=mu+ai+psi+phi
+
+            if abs(gi)<=eta*n*(abs(mu)+abs(ai)+abs(phi)+abs(phi)): 
+                ls[i]=mu+ds[i-caso]
+                break
+            elif gi<0: L=mu
+            else: R=mu        
+    return ls
+
+    
+            
+    
 
 def PHI1(ls,z,ds,qs):
     n=ls.shape[0]
@@ -110,6 +102,9 @@ def PHI3(i,ls,ds,zi): #O(n^2)
     rt=np.sqrt(rt)
     return rt if zi>=0 else -rt
 
+
+
+
 def _DnC_ST(T,tol):
     N,_=T.shape
     if(N<=2):
@@ -143,8 +138,9 @@ def _DnC_ST(T,tol):
     N,_=_H.shape
     ND,_= _L.shape
 
-    ls=np_autovalores(_H)
+    # ls=np_autovalores(_H)
     ds=[_H[i,i] for i in range(1,N)]
+    ls=bisec_autovalores(_H,tol,ds)
 
     z=[PHI3(i,ls,ds,_H[0,i+1]) for i in range(N-1)]  #\sum O(n^2*N/n)=O(N^2)
     for i in range(N):
@@ -170,7 +166,7 @@ def SimTridiag(T,tol):
                 return False
     return True
 
-def DnC_SimTridiag(_T, dfl_tol=f128(1e-9)):
+def DnC_SimTridiag(_T, dfl_tol=f128(1e-16)):
     T=np.copy(_T)
     T.dtype=f128
     N,M=T.shape
