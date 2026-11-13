@@ -2,19 +2,11 @@ from numpy import array
 from numpy.linalg import eig
 from numpy import float128 as f128
 from norms import norm2
-
+from phis import phi_bisec
 def np_autovalores(H):
 	rt,_ =eig(H)
 	rt.sort()
 	return rt
-
-def phi_bisec(mu, delt, z):
-	n= z.shape[0]
-	rt=f128(0)
-	for i in range(n):
-		rt+=(z[i]**2)/(delt[i]-mu)
-	return rt
-
 
 def bisec_autovalores(H,tol,ds):
     n,_= H.shape

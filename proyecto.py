@@ -3,6 +3,7 @@ from numpy import float128 as f128
 from jacobi22 import jacobi22
 from deflation import deflation,_ZEROS
 from find_eigen import bisec_autovalores
+from phis import PHI1,PHI2,PHI3
 
 def diag(T):
     n,_ = T.shape
@@ -10,45 +11,6 @@ def diag(T):
     c,s= jacobi22(T)
     Q=np.array([[c,-s],[s,c]],dtype=f128)
     return Q.T@T@Q, Q
-
-
-
-
-def PHI1(ls,z,ds,qs):
-    n=ls.shape[0]
-    rt=[f128(0)]*n
-    ev =lambda i, j : z[j]*qs[j+1]/(ds[j]-ls[i])
-    for i in range(0,n):
-        L=f128(0)
-        R=f128(0)
-        for j in range(0,n-1):
-            if ds[j]<ls[i] : L+=ev(i,j)
-            else: R+=ev(i,j)
-        rt[i]=L+R
-    return rt
-
-def PHI2(ls,z,ds):
-    n=ls.shape[0]
-    rt=[f128(0)]*n
-    ev =lambda i, j : (z[j]/(ds[j]-ls[i]))**2
-    for i in range(0,n):
-        for j in range(0,n-1):
-            rt[i]+=ev(i,j)
-    return rt
-
-def PHI3(i,ls,ds,zi): # O(n)
-    n=ls.shape[0]
-    if(i>=n or i<0): return 0.
-    rt=(ds[i]-ls[0])*(ls[-1]-ds[i])
-    for j in range(0,i):
-        rt*=(ds[i]-ls[j+1])/(ds[i]-ds[j])
-    for j in range(i,n-2):
-        rt*=(ls[j+1]-ds[i])/(ds[j+1]-ds[i])
-    rt=np.sqrt(rt)
-    return rt if zi>=0 else -rt
-
-
-
 
 def _DnC_ST(T,tol):
     N,_=T.shape

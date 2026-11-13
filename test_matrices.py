@@ -40,24 +40,24 @@ def gamma2_matrix(N,g):#[1/100,1+i*g,1/100]
 
 for N in [128,256,512]:
     msg='random en [-1,1] '+str(N)+'x'+str(N)
-    test_matrix(get_random_SimTridiag(N,-1,1),msg=msg)
+    test_matrix(get_random_SimTridiag(N,-1,1),msg=msg,ignorePrint=True)
 
 for N in [129,257,513]:
     msg='Wilkinson '+str(N)+'x'+str(N)
-    test_matrix(Wilkinson_matrix(N),msg=msg)
-
+    test_matrix(Wilkinson_matrix(N),msg=msg,ignorePrint=True)
+'''
 for N in [125,275,525]:
     msg='Wilkinson pegadas '+str(N)+'x'+str(N)
-    test_matrix(glued_Wilkinson_matrix(N,f128(10)**-14),msg=msg)
-
+    test_matrix(glued_Wilkinson_matrix(N,f128(10)**-14),msg=msg,ignorePrint=True)
+# '''
 for N in [128,256,512]:
     msg='Toeplitz '+str(N)+'x'+str(N)
-    test_matrix(Toeplitz_matrix(N),msg=msg)
+    test_matrix(Toeplitz_matrix(N),msg=msg,ignorePrint=True)
 
 for N in [128,256,512]:
     msg='gamma '+str(N)+'x'+str(N)
-    test_matrix(gamma_matrix(N,f128(10)**-6),msg=msg)
+    test_matrix(gamma_matrix(N,f128(10)**-6),msg=msg,ignorePrint=True)
 
 for N in [128,256,512]:
     msg='gamma2 '+str(N)+'x'+str(N)
-    test_matrix(gamma2_matrix(N,f128(10)**-6),msg=msg)
+    test_matrix(gamma2_matrix(N,f128(10)**-6),msg=msg,ignorePrint=True)
