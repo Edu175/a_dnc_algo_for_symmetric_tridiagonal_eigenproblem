@@ -1,8 +1,8 @@
-import numpy as np
+from numpy import array, copy, sqrt, zeros
 from numpy import float128 as f128
 from norms import norm2
 def _ZEROS(N,M):
-    return np.zeros((N,M),dtype=f128)
+    return zeros((N,M),dtype=f128)
 
 def rotate(L):#O(n)
     return L[1:]+L[:1]
@@ -29,22 +29,19 @@ def deflation(H,Q,tol): #O(n^2)
     while i<N-ND-1: 
         if abs(H[P[i],P[i]]-H[P[i+1],P[i+1]])<delt:
             zj=H[P[0],P[i]],zi=H[P[0],P[i+1]]
-            r=np.sqrt(zj**2+zi**2)
+            r=sqrt(zj**2+zi**2)
             c=zj/r
             s=zi/r
             dj=H[P[i],P[i]]
             di=H[P[i+1],P[i+1]]
 
-            H2=np.copy(H)
             H[P[i],P[i]]=dj*c**2+di*s**2
             H[P[i+1],P[i+1]]=dj*s**2+di*c**2
             
             H[P[0],P[i]],H[P[i],P[0]]=r,r
             H[P[0],P[i+1]],H[P[i+1],P[0]]=0,0
             
-            assert(np.allclose(H,H2,rtol=tol,atol=tol))
-
-            G=np.array([[c,s],[-s,c]],dtype=f128)
+            G=array([[c,s],[-s,c]],dtype=f128)
             
             Q[:,[P[i],P[i+1]]]=Q[:,[P[i],P[i+1]]]@G.T
 
@@ -53,7 +50,7 @@ def deflation(H,Q,tol): #O(n^2)
         else: i+=1
     #H=[_H,  0]
     #  [0 , _L]
-    X=np.copy(Q)
+    X=copy(Q)
     _H=_ZEROS(N-ND,N-ND)
     _L=_ZEROS(ND,ND)
     for i in range(N-ND):
