@@ -18,9 +18,6 @@ def PHI1(ls,z,ds,qs):
     n=ls.shape[0]
     rt=[f128(0)]*n
     ev =lambda i, j : z[j]*qs[j+1]/(ds[j]-ls[i])
-    def ev(i,j):
-        ret=z[j]*qs[j+1]/(ds[j]-ls[i])
-        return ret
     for i in range(0,n):
         L=f128(0)
         R=f128(0)
@@ -39,7 +36,7 @@ def PHI2(ls,z,ds):
             rt[i]+=ev(i,j)
     return rt
 
-def PHI3(i,ls,ds,zi): #O(n^2) 
+def PHI3(i,ls,ds,zi): # O(n)
     n=ls.shape[0]
     if(i>=n or i<0): return 0.
     rt=(ds[i]-ls[0])*(ls[-1]-ds[i])
