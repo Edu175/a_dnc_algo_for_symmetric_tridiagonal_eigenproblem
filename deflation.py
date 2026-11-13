@@ -15,7 +15,7 @@ def deflation(H,Q,tol): #O(n^2)
     
     eta=min(1/(100*N),tol)
     tau=6*eta*N**2
-    delt=tau*norm2(H)
+    delt=tau*norm2(H,isArrow=True)
     ND=0
     i=1
     while i<N-ND :
