@@ -115,7 +115,7 @@ def SimTridiag(T,tol):
                 return False
     return True
 
-def DnC_SimTridiag(_T, dfl_tol=f128(1e-9)):
+def DnC_SimTridiag(_T, dfl_tol=f128(1e-5)):
     T=np.copy(_T)
     T.dtype=f128
     N,M=T.shape

@@ -13,7 +13,7 @@ def deflation(H,Q,tol): #O(n^2)
     P=[i for i in range(N)]
     P[1:]=sorted(P[1:],key=lambda i: H[i,i])
     
-    eta=min(1/(100*N),tol)
+    eta=min(1/(101*N),tol) # en [1], sec 3.3 pag 180., se asume eta*n<.01
     tau=6*eta*N**2
     delt=tau*norm2(H,isArrow=True)
     ND=0
