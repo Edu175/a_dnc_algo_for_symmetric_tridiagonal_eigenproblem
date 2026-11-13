@@ -18,6 +18,9 @@ def PHI1(ls,z,ds,qs):
     n=ls.shape[0]
     rt=[f128(0)]*n
     ev =lambda i, j : z[j]*qs[j+1]/(ds[j]-ls[i])
+    def ev(i,j):
+        ret=z[j]*qs[j+1]/(ds[j]-ls[i])
+        return ret
     for i in range(0,n):
         L=f128(0)
         R=f128(0)
@@ -105,14 +108,14 @@ def _DnC_ST(T,tol):
 def SimTridiag(T,tol):
     N,_=T.shape
     for i in range(1,N):
-        if(abs(T[i][i-1]-T[i-1][i])>tol):
+        if(abs(T[i][i-1]-T[i-1][i])>1e-15):
             return False
         for j in range(i-1):
-            if(abs(T[i][j])>tol):
+            if(abs(T[i][j])>1e-15):
                 return False
     return True
 
-def DnC_SimTridiag(_T, dfl_tol=f128(1e-16)):
+def DnC_SimTridiag(_T, dfl_tol=f128(1e-9)):
     T=np.copy(_T)
     T.dtype=f128
     N,M=T.shape

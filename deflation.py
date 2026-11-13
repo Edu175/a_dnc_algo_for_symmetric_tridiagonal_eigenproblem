@@ -28,7 +28,7 @@ def deflation(H,Q,tol): #O(n^2)
     i=1     
     while i<N-ND-1: 
         if abs(H[P[i],P[i]]-H[P[i+1],P[i+1]])<delt:
-            zj=H[P[0],P[i]],zi=H[P[0],P[i+1]]
+            zj=H[P[0],P[i]]; zi=H[P[0],P[i+1]]
             r=sqrt(zj**2+zi**2)
             c=zj/r
             s=zi/r
