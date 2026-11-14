@@ -42,7 +42,10 @@ def bisec_autovalores(H,tol,ds):
 
         while True: #va a terminar por el 'stop criterion' de [1], ec (9) sec 3.2, pag 178.
             mu=(L+R)/2
-            psi=phi_bisec(mu,delt[:i],z[:i]) #para reducir error numérico, junto sumas del mismo signo
+            assert mu!=L and mu!=R
+            # si este assert salta, esto ciclaría infinitamente,
+            # entonces algo falló con el stop criterion
+            psi=phi_bisec(mu,delt[:i],z[:i]) # para reducir error numérico, junto sumas del mismo signo
             phi=phi_bisec(mu,delt[i:],z[i:])
             gi=mu+ai+psi+phi
 
