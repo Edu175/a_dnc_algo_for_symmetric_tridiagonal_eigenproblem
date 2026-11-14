@@ -1,29 +1,27 @@
 import numpy as np
 from numpy import float128 as f128
 from proyecto import DnC_SimTridiag
+from norms import vnorm2
 EPS=f128(1e-5)
 
 rng=np.random.default_rng(175)
 
 def test_matrix(A,msg="",ignorePrint=False):
 	print('Testing Matrix',msg)
+	N,_=A.shape
 	L,X=DnC_SimTridiag(A)
-	got=X@L@X.T
 	if not ignorePrint:
+		got=X@L@X.T
 		print(A)
 		print('XLX^T:')
 		print(got)
-	max_abs_error=f128(0)
-	max_rel_error=f128(0)
-	for i in range(A.shape[0]):
-		for j in range(A.shape[1]):
-			abs_err=abs(A[i][j]-got[i][j])
-			max_abs_error=max(max_abs_error,abs_err)
-			if abs(A[i][j])>1e-15:
-				rel_err=abs_err/abs(A[i][j])
-				max_rel_error=max(max_rel_error,rel_err)
-	print('Max absoulte error: ',max_abs_error)
-	print('Max relative error: ',max_rel_error)
+	normA=f128(np.linalg.norm(A.astype(np.float64),2))
+	R=A@X-X@L
+	O=X.T@X-np.eye(N,dtype=f128)
+	max_res_error=max(vnorm2(R[:,i]) for i in range(N))/(normA if normA>0 else f128(1))
+	max_orth_error=max(vnorm2(O[:,i]) for i in range(N))
+	print('Residual error (max_i ||Tx_i - l_i x_i||_2 / ||T||_2): ',max_res_error)
+	print('Orthogonality error (max_i ||X^T x_i - e_i||_2): ',max_orth_error)
 	# assert(np.allclose(A,got,rtol=EPS,atol=EPS))
 	# print("Estan cerca :D")
 	print("\n")
