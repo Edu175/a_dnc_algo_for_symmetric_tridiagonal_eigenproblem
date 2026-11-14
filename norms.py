@@ -4,7 +4,7 @@ from phis import eval_suma
 # from scipy.sparse.linalg import svds
 # spectral_norm = svds(A, k=1, return_singular_vectors=False)[0]
 
-EPS=f128(1e-9)
+# EPS=f128(1e-9)
 
 def vnorm2(v):
 	return sqrt(eval_suma([x**2 for x in v]))
@@ -27,9 +27,9 @@ def mnorm2(A, isArrow=False):
 	while True: # metodo de las potencias
 		u=mul(A.T,mul(A,v))
 		nu=norm2(u)
-		if nu<=EPS: return f128(0)
+		if nu<=f128(10)**-30: return f128(0)
 		lam=inner(v,u)
-		if abs(lam-ant)<=max(f128(1),lam)*EPS: return sqrt(lam) # que corte si el difiere poco en el error relativo **o** absoluto
+		if abs(lam-ant)<=lam*(f128(1e-4)): return sqrt(lam) # que corte si el difiere poco en el error relativo
 		v=u/nu
 		ant=lam
 	

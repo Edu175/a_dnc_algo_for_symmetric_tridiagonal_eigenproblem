@@ -66,8 +66,8 @@ def _DnC_ST(T,tol):
 
 def SimTridiag(T,tol):
     N,_=T.shape
-    for i in range(1,N):
-        if(abs(T[i][i-1]-T[i-1][i])>1e-15):
+    for i in range(0,N):
+        if(i and abs(T[i][i-1]-T[i-1][i])>1e-15):
             return False
         for j in range(i-1):
             if(abs(T[i][j])>1e-15):
