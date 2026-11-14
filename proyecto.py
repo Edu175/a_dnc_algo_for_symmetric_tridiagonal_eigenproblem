@@ -37,7 +37,7 @@ def _DnC_ST(T,tol):
                ])
     Q=np.block([
                 [    _ZEROS(k,1),              Q1, _ZEROS(k,N-k-1)],
-                [      np.eye(1),     _ZEROS(1,k), _ZEROS(1,N-k-1)],
+                [np.eye(1,dtype=f128), _ZEROS(1,k), _ZEROS(1,N-k-1)],
                 [_ZEROS(N-k-1,1), _ZEROS(N-k-1,k),              Q2]
                 ])
     
@@ -75,8 +75,7 @@ def SimTridiag(T,tol):
     return True
 
 def DnC_SimTridiag(_T, dfl_tol=f128(1e-10)):
-    T=np.copy(_T)
-    T.dtype=f128
+    T=np.copy(_T).astype(f128)
     N,M=T.shape
     if(N!=M):
         print("Error: T no es cuadrada")
@@ -84,4 +83,4 @@ def DnC_SimTridiag(_T, dfl_tol=f128(1e-10)):
     if(not SimTridiag(T,dfl_tol)):
         print("Error: T no es simétrica tridiagonal")
         return T
-    return _DnC_ST(_T,dfl_tol)
+    return _DnC_ST(T,dfl_tol)
