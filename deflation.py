@@ -19,7 +19,7 @@ def deflation(H,Q,tol): #O(n^2)
     ND=0 #dimension de la deflación
     i=1
     while i<N-ND :
-        if abs(H[P[0],P[i]])<delt: 
+        if abs(H[P[0],P[i]])<=delt: 
             H[P[0],P[i]],H[P[i],P[0]]=0,0
 
             P[i:N-ND]=rotate(P[i:N-ND]) #rotamos así para preservar la estructura de bloques
@@ -28,7 +28,7 @@ def deflation(H,Q,tol): #O(n^2)
         else: i+=1 #solo si no hay deflacion avanzamos, por la rotacion
     i=1     
     while i<N-ND-1: 
-        if abs(H[P[i],P[i]]-H[P[i+1],P[i+1]])<delt:
+        if abs(H[P[i],P[i]]-H[P[i+1],P[i+1]])<=delt:
             zj=H[P[0],P[i]]; zi=H[P[0],P[i+1]]
             r=sqrt(zj**2+zi**2)
             c=zj/r
