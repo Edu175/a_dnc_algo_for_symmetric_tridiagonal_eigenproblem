@@ -50,7 +50,7 @@ def _DnC_ST(T,tol):
     ls=bisec_autovalores(_H,tol,ds)
 
     z=[PHI3(i,ls,ds,_H[0,i+1]) for i in range(N-1)]  #\sum O(n^2*N/n)=O(N^2)
-    for i in range(N):
+    for i in range(N+ND):
         qs=np.copy(Q[i,:])
         vs1=PHI1(ls,z,ds,qs)
         vs2=PHI2(ls,z,ds) 
