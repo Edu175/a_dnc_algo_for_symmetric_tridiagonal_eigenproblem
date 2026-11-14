@@ -1,5 +1,6 @@
 __pycache__
-*.txt
+o*.txt
+test*.txt
 100digit/*
 fmm/*
 deprecated/test_suite.py
