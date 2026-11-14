@@ -24,18 +24,18 @@ def mnorm2(A, isArrow=False):
 				ret[i]=A[i,0]*v[0] + A[i,i]*v[i]
 			return ret
 	ant=inf
-	while True: #metodo de las postencias
+	while True: #metodo de las potencias
 		u=mul(A.T,mul(A,v)) 
 		lam=inner(v,u)
-		if(abs(lam-ant)<=EPS): return lam
+		if(abs(lam-ant)<=EPS): return sqrt(lam)
 		v=u/norm2(u)
 		ant=lam
-		
+	
 
 def norm2(x,isArrow=False):
 	if(x.ndim==1):
 		assert not isArrow
 		return vnorm2(x)
-	return mnorm2(x)
+	return mnorm2(x,isArrow=isArrow)
 	
 

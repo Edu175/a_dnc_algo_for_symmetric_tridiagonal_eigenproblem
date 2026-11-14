@@ -17,10 +17,10 @@ def test_matrix(A,msg="",ignorePrint=False):
 	max_rel_error=f128(0)
 	for i in range(A.shape[0]):
 		for j in range(A.shape[1]):
-			if A[i][j]>1e-15:
-				abs_err=abs(A[i][j]-got[i][j])
+			abs_err=abs(A[i][j]-got[i][j])
+			max_abs_error=max(max_abs_error,abs_err)
+			if abs(A[i][j])>1e-15:
 				rel_err=abs_err/abs(A[i][j])
-				max_abs_error=max(max_abs_error,abs_err)
 				max_rel_error=max(max_rel_error,rel_err)
 	print('Max absoulte error: ',max_abs_error)
 	print('Max relative error: ',max_rel_error)
