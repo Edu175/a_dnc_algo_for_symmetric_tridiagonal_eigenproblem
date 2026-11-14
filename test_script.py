@@ -30,8 +30,9 @@ def test_matrix(A,msg="",ignorePrint=False):
 	O=X.T@X-np.eye(N,dtype=f128)
 	max_res_error=max(vnorm2(R[:,i]) for i in range(N))/(normA if normA>0 else f128(1))
 	max_orth_error=max(vnorm2(O[:,i]) for i in range(N))
-	
-	max_res_error/=N*dfl_tol
+
+	tau=6*dfl_tol*N*(np.log2(N)+1)
+	max_res_error/=tau
 	max_orth_error/=N*eps
 	
 	print(f"| {msg:<28} | {N:>4} | {dt:>9.2f} | {float(max_res_error):>14.4e} | {float(max_orth_error):>14.4e} |", flush=True)

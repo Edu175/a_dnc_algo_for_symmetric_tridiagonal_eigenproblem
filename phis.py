@@ -32,11 +32,8 @@ def PHI1(ls,z,ds,qs):
 	rt=[f128(0)]*n
 	ev =lambda i, j : z[j]*qs[j+1]/(ds[j]-ls[i])
 	for i in range(0,n):
-		L=[]
-		R=[]
-		for j in range(0,n-1):
-			if ds[j]<ls[i] : L.append(ev(i,j))
-			else: R.append(ev(i,j))
+		L=[ev(i,j) for j in range(i)]
+		R=[ev(i,j) for j in range(i,n-1)]
 		rt[i]=eval_suma(L)+eval_suma(R)
 	return rt
 

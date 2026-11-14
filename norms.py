@@ -29,7 +29,7 @@ def mnorm2(A, isArrow=False):
 		nu=norm2(u)
 		if nu<=f128(10)**-30: return f128(0)
 		lam=inner(v,u)
-		if abs(lam-ant)<=lam*(f128(1e-4)): return sqrt(lam) # que corte si el difiere poco en el error relativo
+		if abs(lam-ant)<=lam*(f128(1e-2)): return sqrt(lam) # que corte si el difiere poco en el error relativo, no hace falta tanta precision, por eso el 1e-2, sino se clavaba bastante
 		v=u/nu
 		ant=lam
 	

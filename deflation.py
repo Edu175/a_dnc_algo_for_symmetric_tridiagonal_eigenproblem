@@ -15,6 +15,7 @@ def deflation(H,Q,tol): #O(n^2)
     
     eta=min(1/(101*N),tol) # en [1], sec 3.3 pag 180., se asume eta*n<.01
     tau=6*eta*N*(log2(N)+1) #en [1], sec 3.3 pag 181, da este tau si se usa binary tree (DnC) para evaluar sumas largas en el root-finder.
+	
     delt=tau*norm2(H,isArrow=True)
     ND=0 #dimension de la deflación
     i=1

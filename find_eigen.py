@@ -1,4 +1,4 @@
-from numpy import array
+from numpy import array,log2
 from numpy.linalg import eig
 from numpy import float128 as f128
 from norms import norm2
@@ -49,7 +49,7 @@ def bisec_autovalores(H,tol,ds):
             phi=phi_bisec(mu,delt[i:],z[i:])
             gi=mu+ai+psi+phi
 
-            if abs(gi)<=eta*n*(abs(mu)+abs(ai)+abs(psi)+abs(phi)): 
+            if abs(gi)<=eta*(log2(n)+1)*(abs(mu)+abs(ai)+abs(psi)+abs(phi)): 
                 ls[i]=mu+ds[i-caso]
                 break
             elif gi<0: L=mu
