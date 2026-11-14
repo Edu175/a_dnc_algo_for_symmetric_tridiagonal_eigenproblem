@@ -50,7 +50,7 @@ def PHI2(ls,z,ds):
 
 def PHI3(i,ls,ds,zi):
 	n=ls.shape[0]
-	if(i>=n or i<0): return 0.
+	if(i>=n-1 or i<0): return 0.
 	rt=(ds[i]-ls[0])*(ls[-1]-ds[i])
 	rt*=eval_prod([(ds[i]-ls[j+1])/(ds[i]-ds[j]) for j in range(i)])
 	rt*=eval_prod([(ls[j+1]-ds[i])/(ds[j+1]-ds[i]) for j in range(i,n-2)])

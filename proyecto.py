@@ -72,6 +72,10 @@ def SimTridiag(T,tol):
         for j in range(i-1):
             if(abs(T[i][j])>1e-15):
                 return False
+        for j in range(i+2,N):
+            if(abs(T[i][j])>1e-15):
+                return False
+
     return True
 
 def DnC_SimTridiag(_T, dfl_tol=f128(1e-10)):
