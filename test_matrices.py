@@ -1,7 +1,7 @@
 from numpy import block,random,diagflat
 from numpy import float128 as f128
 from deflation import _ZEROS
-from test_script import test_matrix, get_random_SimTridiag
+from test_script import test_matrix, get_random_SimTridiag, print_table_header, print_table_sep
 
 def mk_SimTridiag(D,OD):
     T=diagflat(D).astype(f128)
@@ -38,28 +38,36 @@ def gamma2_matrix(N,g):#[1/100,1+i*g,1/100]
     gam=[1+i*g for i in range(1,N+1)]
     return mk_SimTridiag(gam,[1/100]*(N-1))
 
+print_table_header()
+
 for N in [128,256,512]:
     msg='random en [-1,1] '+str(N)+'x'+str(N)
     test_matrix(get_random_SimTridiag(N,-1,1),msg=msg,ignorePrint=True)
+print_table_sep()
 
 for N in [129,257,513]:
     msg='Wilkinson '+str(N)+'x'+str(N)
     test_matrix(Wilkinson_matrix(N),msg=msg,ignorePrint=True)
+print_table_sep()
 
 # '''
 for N in [125,275,525]:
     msg='Wilkinson pegadas '+str(N)+'x'+str(N)
     test_matrix(glued_Wilkinson_matrix(N,f128(10)**-14),msg=msg,ignorePrint=True)
+print_table_sep()
 # '''
 
 for N in [128,256,512]:
     msg='Toeplitz '+str(N)+'x'+str(N)
     test_matrix(Toeplitz_matrix(N),msg=msg,ignorePrint=True)
+print_table_sep()
 
 for N in [128,256,512]:
     msg='gamma '+str(N)+'x'+str(N)
     test_matrix(gamma_matrix(N,f128(10)**-6),msg=msg,ignorePrint=True)
+print_table_sep()
 
 for N in [128,256,512]:
     msg='gamma2 '+str(N)+'x'+str(N)
     test_matrix(gamma2_matrix(N,f128(10)**-6),msg=msg,ignorePrint=True)
+print_table_sep()
