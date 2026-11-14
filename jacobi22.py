@@ -1,7 +1,7 @@
 from numpy import sqrt
 from numpy import float128 as f128
 
-EPS=f128(10)**-10
+EPS=f128(10)**-18
 
 def jacobi22(A):
     if(abs(A[0,1])<=EPS): return f128(1.),f128(0.)
