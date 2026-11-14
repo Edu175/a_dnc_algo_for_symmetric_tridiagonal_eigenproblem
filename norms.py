@@ -24,11 +24,13 @@ def mnorm2(A, isArrow=False):
 				ret[i]=A[i,0]*v[0] + A[i,i]*v[i]
 			return ret
 	ant=inf
-	while True: #metodo de las potencias
-		u=mul(A.T,mul(A,v)) 
+	while True: # metodo de las potencias
+		u=mul(A.T,mul(A,v))
+		nu=norm2(u)
+		if nu<=EPS: return f128(0)
 		lam=inner(v,u)
-		if(abs(lam-ant)<=EPS): return sqrt(lam)
-		v=u/norm2(u)
+		if abs(lam-ant)<=max(f128(1),lam)*EPS: return sqrt(lam) # que corte si el difiere poco en el error relativo **o** absoluto
+		v=u/nu
 		ant=lam
 	
 
@@ -37,5 +39,3 @@ def norm2(x,isArrow=False):
 		assert not isArrow
 		return vnorm2(x)
 	return mnorm2(x,isArrow=isArrow)
-	
-
