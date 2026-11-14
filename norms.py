@@ -1,16 +1,13 @@
 from numpy import sqrt, random, inner, dot, inf, zeros
 from numpy import float128 as f128
-
+from phis import eval_suma
 # from scipy.sparse.linalg import svds
 # spectral_norm = svds(A, k=1, return_singular_vectors=False)[0]
 
 EPS=f128(1e-9)
 
 def vnorm2(v):
-	rt=f128(0)
-	for xi in v:
-		rt+=xi**2
-	return sqrt(rt)
+	return sqrt(eval_suma([x**2 for x in v]))
 
 def mnorm2(A, isArrow=False):
 	n,m=A.shape
@@ -27,7 +24,7 @@ def mnorm2(A, isArrow=False):
 				ret[i]=A[i,0]*v[0] + A[i,i]*v[i]
 			return ret
 	ant=inf
-	while True:
+	while True: #metodo de las postencias
 		u=mul(A.T,mul(A,v)) 
 		lam=inner(v,u)
 		if(abs(lam-ant)<=EPS): return lam

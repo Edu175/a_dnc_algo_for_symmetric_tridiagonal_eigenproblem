@@ -46,7 +46,7 @@ def bisec_autovalores(H,tol,ds):
             phi=phi_bisec(mu,delt[i:],z[i:])
             gi=mu+ai+psi+phi
 
-            if abs(gi)<=eta*n*(abs(mu)+abs(ai)+abs(phi)+abs(phi)): 
+            if abs(gi)<=eta*n*(abs(mu)+abs(ai)+abs(psi)+abs(phi)): 
                 ls[i]=mu+ds[i-caso]
                 break
             elif gi<0: L=mu

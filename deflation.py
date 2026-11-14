@@ -14,17 +14,18 @@ def deflation(H,Q,tol): #O(n^2)
     P[1:]=sorted(P[1:],key=lambda i: H[i,i])
     
     eta=min(1/(101*N),tol) # en [1], sec 3.3 pag 180., se asume eta*n<.01
-    tau=6*eta*N*(log2(N)+1)
+    tau=6*eta*N*(log2(N)+1) #en [1], sec 3.3 pag 181, da este tau si se usa binary tree (DnC) para evaluar sumas largas en el root-finder.
     delt=tau*norm2(H,isArrow=True)
-    ND=0
+    ND=0 #dimension de la deflación
     i=1
     while i<N-ND :
         if abs(H[P[0],P[i]])<delt: 
-            H[P[0],P[i]],H[P[0],P[i]]=0,0
-            P[i:N-ND]=rotate(P[i:N-ND])
+            H[P[0],P[i]],H[P[i],P[0]]=0,0
+
+            P[i:N-ND]=rotate(P[i:N-ND]) #rotamos así para preservar la estructura de bloques
             ND+=1
         
-        else: i+=1            
+        else: i+=1 #solo si no hay deflacion avanzamos, por la rotacion
     i=1     
     while i<N-ND-1: 
         if abs(H[P[i],P[i]]-H[P[i+1],P[i+1]])<delt:
@@ -32,6 +33,7 @@ def deflation(H,Q,tol): #O(n^2)
             r=sqrt(zj**2+zi**2)
             c=zj/r
             s=zi/r
+
             dj=H[P[i],P[i]]
             di=H[P[i+1],P[i+1]]
 
@@ -45,21 +47,24 @@ def deflation(H,Q,tol): #O(n^2)
             
             Q[:,[P[i],P[i+1]]]=Q[:,[P[i],P[i+1]]]@G.T
 
-            P[i+1:N-ND]=rotate(P[i+1:N-ND])
+            P[i+1:N-ND]=rotate(P[i+1:N-ND]) #analogo al caso anterior
             ND+=1
         else: i+=1
     #H=[_H,  0]
     #  [0 , _L]
-    X=copy(Q)
+    
+    
     _H=_ZEROS(N-ND,N-ND)
-    _L=_ZEROS(ND,ND)
+    _L=_ZEROS(ND,ND) #autovalores aproximados
+
     for i in range(N-ND):
         _H[i,i]=H[P[i],P[i]]
         _H[0,i]=H[P[0],P[i]]
         _H[i,0]=_H[0,i]
     for i in range(N-ND,N):
         _L[i-(N-ND),i-(N-ND)]=H[P[i],P[i]]
-    for i in range(N):
-        for j in range(N): Q[i,j]=X[i,P[j]]
-   
+    
+    X=copy(Q)
+    for j in range(N): Q[:,j]=X[:,P[j]]
+
     return _H,_L
