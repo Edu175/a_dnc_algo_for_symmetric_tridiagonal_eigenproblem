@@ -4,7 +4,7 @@
 \usepackage[T1]{fontenc}
 \usepackage[spanish,es-tabla]{babel} % 'es-tabla' cambia "Cuadro" por "Tabla"
 \usepackage{csquotes}
-
+\usepackage{amsthm}
 \usepackage{lmodern}
 \usepackage{microtype}
 
@@ -66,12 +66,19 @@
     justification=centering
 }
 
+%--------------- macros ---------------
+
+\newcommand{\Sum}{\sum\limits}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Prod}{\prod\limits}
+
 % --- Listas, Matemáticas y Cuadros Destacados ---
 \usepackage{enumitem}
 \setlist[itemize]{leftmargin=1.5em, itemsep=0.2em}
 \setlist[enumerate]{leftmargin=1.5em, itemsep=0.2em}
 \usepackage{amsmath,amssymb}
 \usepackage[most]{tcolorbox}
+\newtheorem{lema}{Lema}
 
 % Estilo de caja destacada para resúmenes o hallazgos clave
 \newtcolorbox{calloutbox}[1][]{
@@ -154,7 +161,7 @@ autovalores}\\[0.5cm]
 
 \begin{calloutbox}
     % Este espacio está diseñado para sintetizar en 1 o 2 párrafos el propósito del informe, la metodología empleada, los hallazgos principales y las recomendaciones clave. Debe permitir al lector comprender el valor del documento sin necesidad de leerlo en su totalidad.
-    En este informe veremos cómo Diagonalizar una matriz tridiagonal $T \in \mathbb{R}^{N \times N}$, con complejidad temporal $O(N^2\rm{log^2}(\frac1\varepsilon))$ con el algoritmo presentado en [1], con un error numérico $O(N \varepsilon \| T\|_2 )$, detalles de implementación sobre el redondeo y complejidades finales tanto de error numérico como de complejidad temporal.\\
+    En este informe veremos cómo Diagonalizar una matriz tridiagonal $T \in \R^{N \times N}$, con complejidad temporal $O(N^2\rm{log^2}(\frac1\varepsilon))$ con el algoritmo presentado en [1], con un error numérico $O(N \varepsilon \| T\|_2 )$, detalles de implementación sobre el redondeo y complejidades finales tanto de error numérico como de complejidad temporal.\\
     
     Finalmente, con una implementación hecha en python, con peor cota temporal por simplicidad, compararemos las aproximaciones de los autovectores hechos por nuestra implementación contra las presentadas en [1] y con una implementación propia de $QR$.
 
@@ -178,7 +185,7 @@ autovalores}\\[0.5cm]
 
 \section{Introducción}
 % En esta sección se presenta el contexto general del problema o proyecto abordado, los antecedentes relevantes y la justificación de por qué se elabora este informe \cite{referencia1}.
-Dada una matriz tridiagonal $T\in \mathbb{R}^{N\times N}:$\\
+Dada una matriz tridiagonal $T\in \R^{N\times N}:$\\
 
 $$T=\begin{pmatrix}
     \alpha_1 & \beta_2 &  &  &  \\
@@ -193,7 +200,7 @@ $$H=\begin{pmatrix}
     \alpha & z^T \\
     z & D
 \end{pmatrix}$$ 
-donde $\alpha \in \mathbb{R}, z\in \mathbb{R}^N$ y $D \in \mathbb{R}^{N \times N}$ es diagonal. Finalmente hallaremos los autovalores de $T$ construyendo la descomposición espectral de $H=U \Lambda U^T$, donde $U$ es una matriz unitaria, y los autovectores de $T$ son las columnas de $QU$. \\
+donde $\alpha \in \R, z\in \R^N$ y $D \in \R^{N \times N}$ es diagonal. Finalmente hallaremos los autovalores de $T$ construyendo la descomposición espectral de $H=U \Lambda U^T$, donde $U$ es una matriz unitaria, y los autovectores de $T$ son las columnas de $QU$. \\
 
 Como última definición interna introductoria, diremos que una descomposición espectral numérica es de la forma:\\
 
@@ -244,6 +251,235 @@ $$T=\begin{pmatrix}
 $$\equiv QHQ^T$$
 Donde $\ell_1^T$ es la ultima fila de $Q_1$ y $f_2^T$ es la primera fila de $Q_2$. Por lo que $T$ es ortogonalmente similar a $H$, y nos dedicaremos a descomponer espectralmente a $H$.\\
 A lo sumo van a haber $O(\rm{log}(N))$ niveles de recursión en el \textit{DnC} (Divide and Conquer).
+
+
+
+
+\section{Descomposición Espectral Numérica de una matriz flecha simétrica}
+
+En esta sección veremos un método estable y eficiente para computar la descomposición espectral de una matriz $N\times N$ flecha simétrica:
+
+$$H=\begin{pmatrix}
+    \alpha & z^T \\
+    z & D
+\end{pmatrix}$$
+
+donde $D=diag(d_2, \dots ,d_N)$ es una matriz diagonal. En adelanto asumiremos que:
+
+\begin{equation}
+    \mid d_{j+1}-d_j \mid \geq \tau \|H\|_2 ~~~~~~\mid z_j\mid \geq \tau \| H\|_2
+\end{equation}
+
+donde $\tau$ es un múltiplo pequeño de $\varepsilon$ y $N$, que se determinará más adelante. Cualquier matriz flecha simétrica se puede reducir hasta que cumpla esta condición usando deflación. \\
+
+El siguiente lema caracteriza los autovalores de una matriz flecha simétrica: 
+
+\begin{lema}
+
+    Los autovalores $\left \lbrace \lambda \rbrace \right_{i=1}^N$ de $H$ cumplen la propiedad intercalada:
+    $$\lambda_1 < d_2 <\lambda_2 < \cdots < d_N <\lambda_N$$ 
+    y son las raíces de la ecuación secular:
+    \begin{equation}
+        f(\lambda)=\lambda - \alpha + \Sum_{j=2}^N \frac{z_j^2} {d_j -\lambda}
+    \end{equation}
+    y cada autovector $u_i$ de $\lambda_i$ es de la forma:
+    \begin{equation}
+     u_i = \frac{\left( -1 , \frac{z_2}{d_2-\lambda_i}, \cdots , \frac{z_n}{d_n -\lambda_i} \right)^T}{\sqrt{1+\Sum_{j=2}^N \frac{z_j^2} {\left(d_j -\lambda\right)^2}}} 
+    \end{equation}
+\end{lema}
+
+Y el siguiente lema nos permite reconstruir una matriz flecha $\hat{H}= H +O(\varepsilon \| H\|_2)$ en base a una aproximación $\left \lbrace \hat{\lambda}_i \right \rbrace_{i=1}^N$.
+
+\begin{lema}
+    Sea $\left \lbrace d_i\right \rbrace_{i=2}^N$ y $\left \lbrace \hat{\lambda_i} \right \rbrace_{i=1}^N$ tales que cumplan la propiedad intercalada, entonces existe una matriz flecha simétrica 
+    $$\hat{H}=\begin{pmatrix}
+        \hat{\alpha} & \hat{z}^T \\
+        \hat{z} & D
+    \end{pmatrix}$$
+    
+    tal que $D=diag(d_2, \dots, d_N)$ y los autovalores de $\hat{H}$ son $\left \lbrace \hat{\lambda_i} \right \rbrace_{i=1}^N$.\\
+    Además se cumple:
+    
+    \begin{equation}
+        |\hat{z}_i|= \sqrt{ (\hat{\lambda}_1 - d_i) (d_i-\hat{\lambda}_N) \Prod_{j=2}^{i-1} \frac{d_i -\hat{\lambda}_j}{d_i - d_j} \Prod_{j=i}^{N-1} \frac{\hat{\lambda}_i- d_i}{d_{j+1} -d_i} }
+    \end{equation}
+    \\
+    \begin{equation}
+        \hat{\alpha}= \hat{\lambda}_1 + \Sum_{j=2}^N  (\hat{\lambda}_j -d_j)
+    \end{equation}
+    donde el signo de $\hat{z_i}$ se puede elegir arbitrariamente.
+\end{lema}
+
+
+\subsection{Computar los autovalores}
+
+Dado que $\lambda_i \in (d_i, d_{i+1})$ para $2\leq i \leq N-1$, y $\lambda_1 \in \left(d_2-\|z\|_2 -\mid \alpha \mid , d_2 \right) $ y $\lambda_N \in \left(d_N, d_N+\|z\|_2 +\mid \alpha \mid \right)$, podemos usar cualquier método numérico de búsqueda de raíces para hallar las raíces de la ecuación secular $f$. En el caso de nuestro algoritmo implementamos bisección, en el artículo [1] presenta mejores métodos más eficientes numéricamente para hallar los $\lambda_i$. \\
+
+En la búsqueda de los autovalores, para mejorar la precisión, buscamos el $i$-ésimo autovalor $\lambda_i=d_{c_i}+\mu_i$ buscando a $\mu_i$ raíz de:
+$$g_i(\mu):=f(\mu+d_{c_i})\equiv \mu +\alpha_i +\psi_i(\mu) + \phi_i(\mu)$$
+donde $c_i$ es el índice $r$ que minimiza $\mid d_r - \lambda_i \mid$, $\alpha_i=d_{c_i}-\alpha$.  $\psi_i$ y $\phi_i$ son los términos negativos y positivos, respectivamente, de la sumatoria de $(3)$, separados así para reducir error numérico al ser cada uno sumas del mismo signo. El valor de $c_i$ se puede decidir de la siguiente forma:\\
+
+$$c_i=\begin{cases} 
+    2 & \texttt{ si $i=1$}\\
+    N & \texttt{ si $i=N$}\\
+    i & \texttt{ si $f\left(\frac{d_i+d_{i+1}}2\right)>0$}\\
+    i+1 & \texttt{ caso contrario}
+\end{cases}$$
+
+ahora, como $psi_i$ y $phi_i$ son sumas del mismo signo, podemos acotar el error de computar $g_i(\mu)$ por:
+
+$$\eta E_{\small\rm{suma}}(N) \left(\mid \mu \mid+ \mid \alpha_i \mid+ \mid \psi_i(\mu) \mid + \mid \phi_i(\mu) \mid\right)$$
+
+Donde $\eta$ es un múltiplo pequeño de $\varepsilon$ independiente de $N$ y $\mu$, y $E_{\small\rm{suma}}(N)$ es el error de sumar $N$ términos en una suma del mismo signo de punto flotante, por lo que $E_{\small\rm{suma}}(N) = O(N)$ si se suma de forma naive elemento a elemento, $O(log(N))$ si se usa un arbol binario para evaluar (o simplemente otro \textit{DnC} sobre el arreglo de sumandos), o sino $O(1)$ si se usan métodos más sostificados ([CITA]).\\
+
+Como el método de encontrar raíces puede demorarse mucho debido a la imposibilidad de decidir el signo de $g_i$, el artículo [1] propone el \textit{stop criterion}, que finalize la búsqueda si se encuentra un $\mu$ tal que:
+$$\mid g_i (\mu) \mid \leq \eta E_{\small\rm{suma}}(N) \left(\mid \mu \mid+ \mid \alpha_i \mid+ \mid \psi_i(\mu) \mid + \mid \phi_i(\mu) \mid\right)$$
+
+Nótese que existe al menos un punto flotante que cumple el \textit{stop criterion}, debido a la cota del error. En el caso de nuestra implementación, llamamos a \rm{np.sum}, que usa un arbol binario, por lo que tendremos nosotros $ E_{\small\rm{suma}}(N)=O(log(N))$, que se puede mejorar con implementaciones más sostificadas de punto flotante. \\
+
+Como pequeño caso borde de implementación, debido a la deflación que explicaremos en la siguiente sección, podríamos querer hallar los autovalores de una matriz $H$ de dimensiones $1 \times 1$, la cual no tiene la propiedad intercalada ni muchas cosas que asumimos antes, por lo que simplemente hay que agregar el pequeño caso de que si $H$ es  $1 \times 1$, entonces la función de búsqueda de autovalores de la matriz flecha simplemente tiene que devolver $H_{1,1}$.\\
+
+\subsection{Estabilidad Numérica}
+
+Para no repetir las cuentas presentadas en [1], si tomamos $\tau=6 \eta N E_{\small\rm{suma}}(N) \| H\|_2$, y tomando $\hat{z}_i$ del mismo signo que $z_i$, podemos demostrar que:
+
+$$\mid z_i - \hat{z}_i \mid \leq 6 \eta N E_{\small\rm{suma}}(N) \| H\|_2= 6 \tau \|H\|_2= O(\tau \|H\|_2)$$
+
+que es lo mejor que podemos hacer, asimptóticamente hablando teniendo en cuenta que el 'épsilon' de la matriz es $\tau \|H\|_2$.\\
+
+Para fines de nuestro proyecto, no nos interesa el error de $\hat{\alpha}$ con $\alpha$, debido a que no va a ser usado $\hat{\alpha}$ en todo el algoritmo.\\
+
+\section{Deflación}
+
+
+Acá demostraremos que podemos reducir cualqueir matriz $H$ flecha simétrica a una que cumpla $(2)$. \\
+
+Supongamos que $\mid z_i \mid < \tau \|H\|_2$, entonces:
+
+$$H=\begin{pmatrix} 
+    \alpha & z_L^T & z_i & z_R^T \\
+    z_L & D_L & 0 & 0\\
+    z_i & 0 & d_i& 0 \\
+    z_R & 0 & 0 & D_R 
+\end{pmatrix}=\begin{pmatrix} 
+    \alpha & z_L^T & 0 & z_R^T \\
+    z_L & D_L & 0 & 0\\
+    0 & 0 & d_i& 0 \\
+    z_R & 0 & 0 & D_R 
+\end{pmatrix} +O(\tau \|H\|_2) = P  \begin{pmatrix} 
+    \alpha & z_L^T & z_R^T & 0 \\
+    z_L & D_L & 0 & 0\\
+    z_R & 0 & D_R & 0 \\
+    0 & 0 & 0 & d_i
+\end{pmatrix}  P^T +O(\tau \|H\|_2)$$
+
+para alguna matriz de permutación $P$, y $z_L$ son las componentes de $z$ con índices menores que $i$, y $z_R$ los coeficientes con índices mayores que $i$. Y nos queda en la submatriz superior izquierda una matriz flecha simétrica de $(N-1) \times (N-1)$, debido a que $d_i$ es automáticamente un autovalor aproximado.\\
+
+Supongamos ahora que $\mid d_{i+1}-d_i \mid < \tau \|H\|_2$, aplicando una rotación de givens para reducir a $0$ a $z_{i+1}$:
+
+$$GHG^T=
+\begin{pmatrix}
+    1 & 0 & 0 & 0 & 0 \\
+    0 & I & 0 & 0 & 0 \\
+    0 & 0 & c & s & 0 \\
+    0 & 0 & -s & c & 0\\
+    0 & 0 & 0 & 0 & I
+\end{pmatrix}
+\begin{pmatrix} 
+    \alpha & z_L^T & z_i & z_{i+1} & z_R^T \\
+    z_L & D_L & 0 & 0 & 0\\
+    z_i & 0 & d_i & 0 & 0 \\
+    z_{i+1} & 0 & 0 & d_{i+1} & 0 \\
+    z_R & 0 & 0 & 0 & D_R 
+\end{pmatrix}
+\begin{pmatrix}
+    1 & 0 & 0 & 0 & 0 \\
+    0 & I & 0 & 0 & 0 \\
+    0 & 0 & c & -s & 0 \\
+    0 & 0 & s & c & 0\\
+    0 & 0 & 0 & 0 & I
+\end{pmatrix}
+$$
+$$
+=\begin{pmatrix} 
+    \alpha & z_L^T & r & 0 & z_R^T \\
+    z_L & D_L & 0 & 0 & 0\\
+    r & 0 & d_i c^2+d_{i+1} s^2 & cs(d_{i+1}-d_i) & 0 \\
+    0 & 0 & cs(d_{i+1}-d_i) & d_i s^2+d_{i+1} c^2  & 0 \\
+    z_R & 0 & 0 & 0 & D_R 
+\end{pmatrix}$$
+$$=\begin{pmatrix} 
+    \alpha & z_L^T & r & 0 & z_R^T \\
+    z_L & D_L & 0 & 0 & 0\\
+    r & 0 & d_i c^2+d_{i+1} s^2 & 0 & 0 \\
+    0 & 0 & 0 & d_i s^2+d_{i+1} c^2  & 0 \\
+    z_R & 0 & 0 & 0 & D_R 
+\end{pmatrix} +O(\tau \|H\|_2) $$
+$$ =P\begin{pmatrix} 
+    \alpha & z_L^T & r & z_R^T & 0 \\
+    z_L & D_L & 0 & 0 & 0\\
+    r & 0 & d_i c^2+d_{i+1} s^2 & 0 & 0 \\
+    z_R & 0 & 0 & D_R & 0 \\
+    0 & 0 & 0 & 0 & d_i s^2+d_{i+1} c^2 \\
+\end{pmatrix} P^T +O(\tau \|H\|_2)
+$$
+
+Donde $r=\sqrt{z_i^2 +z_{i+1}^2}, c=\frac{z_i}r , s=\frac{z_{i+1}}r$, y $P$ es una matriz permutación correspondiente. Dado que $cs<1$, perturbamos $cs(d_{i+1}-d_i)$ a $0$. Finalmente nos queda una matriz flecha simétrica de dimensiones $(N-1) \times (N-1)$, dado que $d_i s^2+d_{i+1} c^2$ es un autovalor aproximado. Notemos además que $d_i \leq d_i c^2+d_{i+1} s^2 \leq d_{i+1}$ dado que $0 \leq c^2,s^2 \leq 1$, por lo que los nuevos valores de la diagonal seguirán en orden creciente.\\
+
+Ambas deflaciones presentadas son estables como en $(1)$.
+
+\subsection{Preservación de la forma de bloques de $Q$ tras la deflación}
+
+Como ya veremos más adelante, calcular $QU$ presenta un gran cuello de botella en este algoritmo, pero se puede optimizar por constante aprovechándonos de su forma a bloques:
+
+$$Q=\begin{pmatrix}
+        0 & Q_1 & 0 \\
+        1 & 0 & 0 \\
+        0 & 0 & Q_2  
+\end{pmatrix}$$
+
+Pero tras la deflación, para mantener el error numérico, ignoramos los autovalores aproximados antes de iniciar la búsqueda de raíces de la función secular $f$, permutamos la matriz para mandarlos `al fondo' de la matriz. Pero podemos notar que por la forma de la permutación presentada en la deflación  $\tilde{Q}=Q G_1P^T_1 G_2P^T_2 \cdots G_mP^T_m$, donde se aplicaron $m$ deflaciones en total (si la $i$-ésima deflación fue del primer tipo entonces $G_i \equiv I$), va a tener la forma:
+
+$$\tilde{Q}=\begin{pmatrix} 
+    0 & \tilde{Q}_{0,1} & \tilde{Q}_1 & 0 \\
+    1 & 0 & 0 & 0 \\
+    0 & \tilde{Q}_{0,2} & 0 & \tilde{Q}_2 & 0
+\end{pmatrix}$$
+
+el detalle de las cuentas están en la sección $4.2$ de [1]. Esto mejora el rendimiento del algoritmo si nos aprovechamos la estructura de bloques de $\tilde{Q}$ al computar el producto $\tilde{Q}U$. Nuestra implementación no se aprovecha de ello, debido a la dificultad de la implementación y el hecho que la recursividad de python y el manejar listas probablemente empeoraría esa mejora por constante que tratábamos de hacer.\\
+
+Finalmente vamos a tener tras las permutaciones a:
+
+$$H= \begin{pmatrix}
+    \tilde{H} & 0\\
+    0 & \tilde{L} 
+\end{pmatrix}$$
+donde $\tilde{H}$ es una matriz flecha simétrica que cumple $(2)$ y $\tilde{L}$ es una matriz diagonal.  La búsqueda de raíces de la función secular la haremos sobre $\tilde{H}$.\\
+
+\section{Aceleración con FMM}
+
+Fast Multipole Method (FMM) es un algoritmo que dada una función
+
+$$\Phi(\zeta) = \Sum_{j=1}^n c_j \phi(\xi_j-\zeta)$$
+
+donde $\zeta\in \mathbb{C}$, y $phi$ es una de $\frac{1}{\zeta}, \frac{1}{\zeta^2}$ o $\rm{log}(\zeta)$. Permite multievaluar a $\Phi$ en $m$ puntos $\zeta_1, \dots, \zeta_m$ en tiempo $O((n+m) \rm{log}^2(\frac{1}{\varepsilon}))$. Se puede optimizar el algoritmo aprovechándonos que, en este caso, $\zeta \in \R$. Hacer esto trivialmente nos acelera las evaluaciones de la búsqueda de raíces de la función secular $f$. Además notemos que pode la forma de los autovectores $u_i$ de la flecha y ver que, dado un vector arbitrario $q$:
+
+$$u_i^T q= \frac{-q_1+\Phi_1(\lambda_i)}{\sqrt(1+\Phi_2(\lambda_i))}$$
+
+donde :
+$$\Phi_1(\lambda)= \Sum_{k=2}^N \frac{z_k q_k}{d_k-\lambda} && \Phi_2(\lambda)=\Sum_{k=2}^N \left(\frac{z_k}{d_k-\lambda}\right)^2$$
+
+Por lo que cada fila de $\tilde{Q}U$ es de la forma $q^TU=\left(U^Tq\right)^T$, cuyas componentes son de la forma $u_i^Tq$ y hay $N$ filas, por lo que el costo de evaluar todas las componentes de todas las filas es $O(N^2\rm{log}^2(\frac1{\varepsilon}))$.
+
+
+
+
+
+
+
+ 
+
+
 \section{Resultados y Análisis}
     
 
