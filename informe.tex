@@ -200,7 +200,7 @@ $$H=\begin{pmatrix}
     \alpha & z^T \\
     z & D
 \end{pmatrix}$$ 
-donde $\alpha \in \R, z\in \R^N$ y $D \in \R^{N \times N}$ es diagonal. Finalmente hallaremos los autovalores de $T$ construyendo la descomposición espectral de $H=U \Lambda U^T$, donde $U$ es una matriz unitaria, y los autovectores de $T$ son las columnas de $QU$. \\
+donde $\alpha \in \R, z\in \R^N$ y $D \in \R^{(N-1) \times (N-1)}$ es diagonal. Finalmente hallaremos los autovalores de $T$ construyendo la descomposición espectral de $H=U \Lambda U^T$, donde $U$ es una matriz unitaria, y los autovectores de $T$ son las columnas de $QU$. \\
 
 Como última definición interna introductoria, diremos que una descomposición espectral numérica es de la forma:\\
 
@@ -264,7 +264,7 @@ $$H=\begin{pmatrix}
     z & D
 \end{pmatrix}$$
 
-donde $D=diag(d_2, \dots ,d_N)$ es una matriz diagonal. En adelanto asumiremos que:
+donde $D=diag(d_2, \dots ,d_N)$ es una matriz diagonal. En adelante asumiremos que:
 
 \begin{equation}
     \mid d_{j+1}-d_j \mid \geq \tau \|H\|_2 ~~~~~~\mid z_j\mid \geq \tau \| H\|_2
@@ -276,7 +276,7 @@ El siguiente lema caracteriza los autovalores de una matriz flecha simétrica:
 
 \begin{lema}
 
-    Los autovalores $\left \lbrace \lambda \rbrace \right_{i=1}^N$ de $H$ cumplen la propiedad intercalada:
+    Los autovalores $\left \lbrace \lambda_i \rbrace \right_{i=1}^N$ de $H$ cumplen la propiedad intercalada:
     $$\lambda_1 < d_2 <\lambda_2 < \cdots < d_N <\lambda_N$$ 
     y son las raíces de la ecuación secular:
     \begin{equation}
