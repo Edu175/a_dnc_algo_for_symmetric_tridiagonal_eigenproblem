@@ -4,3 +4,7 @@ test*.txt
 100digit/*
 fmm/*
 deprecated/test_suite.py
+*.toc
+*.aux
+*.log
+*.out

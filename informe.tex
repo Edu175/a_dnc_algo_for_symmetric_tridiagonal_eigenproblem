@@ -1,0 +1,321 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish,es-tabla]{babel} % 'es-tabla' cambia "Cuadro" por "Tabla"
+\usepackage{csquotes}
+
+\usepackage{lmodern}
+\usepackage{microtype}
+
+\usepackage[
+    top=2.5cm,
+    bottom=2.5cm,
+    left=2.5cm,
+    right=2.5cm,
+    headheight=24pt
+]{geometry}
+\usepackage{setspace}
+\onehalfspacing
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.6em}
+
+\usepackage[dvipsnames,table]{xcolor}
+\definecolor{PrimaryColor}{HTML}{1B365D}   % Azul marino sobrio
+\definecolor{AccentColor}{HTML}{2B6CB0}    % Azul medio para detalles
+\definecolor{LightBg}{HTML}{F4F7FA}        % Fondo suave para cuadros
+\definecolor{BorderGray}{HTML}{CBD5E1}     % Gris claro para líneas
+\definecolor{TextMuted}{HTML}{4A5568}      % Gris oscuro para metadatos
+
+% --- Encabezados y Pies de Página ---
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\textcolor{TextMuted}{DnC para Diagonalización de Tridiagonales Simétricas}}
+\fancyhead[R]{\small\textcolor[HTML]{128BA8} {FAMAF}}
+\fancyfoot[L]{\small\textcolor{TextMuted}{Octubre 2026}}
+\fancyfoot[R]{\small\textcolor{TextMuted}{Página \thepage\ de \pageref{LastPage}}}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
+\renewcommand{\headrule}{\hbox to\headwidth{\color{BorderGray}\leaders\hrule height \headrulewidth\hfill}}
+\renewcommand{\footrule}{\hbox to\headwidth{\color{BorderGray}\leaders\hrule height \footrulewidth\hfill}}
+
+% --- Estilo de Títulos y Secciones ---
+\usepackage{titlesec}
+\titleformat{\section}
+  {\Large\bfseries\color{PrimaryColor}}
+  {\thesection.}{0.6em}{}[\vspace{2pt}{\color{AccentColor}\titlerule[1pt]}]
+\titleformat{\subsection}
+  {\large\bfseries\color{AccentColor}}
+  {\thesubsection}{0.6em}{}
+\titleformat{\subsubsection}
+  {\normalsize\bfseries\color{PrimaryColor}}
+  {\thesubsubsection}{0.6em}{}
+
+% --- Tablas, Figuras y Gráficos ---
+\usepackage{graphicx}
+\usepackage{booktabs}      % Tablas profesionales (\toprule, \midrule, \bottomrule)
+\usepackage{array}
+\usepackage{float}
+\usepackage{caption}
+\captionsetup{
+    font=small,
+    labelfont={bf,color=PrimaryColor},
+    textfont=it,
+    justification=centering
+}
+
+% --- Listas, Matemáticas y Cuadros Destacados ---
+\usepackage{enumitem}
+\setlist[itemize]{leftmargin=1.5em, itemsep=0.2em}
+\setlist[enumerate]{leftmargin=1.5em, itemsep=0.2em}
+\usepackage{amsmath,amssymb}
+\usepackage[most]{tcolorbox}
+
+% Estilo de caja destacada para resúmenes o hallazgos clave
+\newtcolorbox{calloutbox}[1][]{
+    colback=LightBg,
+    colframe=AccentColor,
+    leftrule=3pt,
+    rightrule=0pt,
+    toprule=0pt,
+    bottomrule=0pt,
+    arc=2pt,
+    boxsep=6pt,
+    left=10pt,
+    right=10pt,
+    top=6pt,
+    bottom=6pt,
+    fonttitle=\bfseries\color{PrimaryColor},
+    title=#1
+}
+
+% --- Hipervínculos y Metadatos PDF ---
+\usepackage[
+    colorlinks=true,
+    linkcolor=PrimaryColor,
+    citecolor=AccentColor,
+    urlcolor=AccentColor,
+    pdftitle={Divide y vencerás: Un algoritmo para el problema de
+autovalores de una simétrica tridiagonal},
+    pdfauthor={Brunelli Della Mea Tiziano Arduino, Carranza Velez Eduardo}
+]{hyperref}
+
+% ==============================================================================
+% INICIO DEL DOCUMENTO
+% ==============================================================================
+\begin{document}
+
+\begin{titlepage}
+    \thispagestyle{empty}
+    
+    \begin{flushleft}
+        {\large\bfseries\color{PrimaryColor} Universidad Nacional de Córdoba}\\[2pt]
+        {\normalsize\color[HTML]{128BA8} FAMAF}
+    \end{flushleft}
+    
+    \vspace{0.2cm}
+    
+    % Espacio para logotipo (descomenta \includegraphics y reemplaza 'logo.png')
+    \begin{center}
+        \includegraphics[width=10cm]{Logo-FAMAF-color-pleno.jpg}
+    \end{center}
+    
+    \vspace{0.4cm}
+    
+    % Bloque de título principal
+    \noindent{\color{AccentColor}\rule{\linewidth}{2pt}}\\[0.6cm]
+    {\small\bfseries{\MakeUppercase{Informe}}}\\[0.4cm]
+    {\Huge\bfseries\color{PrimaryColor} Divide y vencerás: Un algoritmo para el problema de
+autovalores}\\[0.5cm]
+    {\Large\color{TextMuted} Diagonalización Numérica de matrices Simétricas Tridiagonales}\\[0.4cm]
+    \noindent{\color{AccentColor}\rule{\linewidth}{1pt}}
+    
+    \vfill
+    
+    % Tabla de metadatos
+    \begin{flushright}
+        \begin{tabular}{>{\bfseries\color{PrimaryColor}}r p{7.5cm}}
+            Autor(es): & Brunelli Della Mea Tiziano Arduino \\
+                       & Carranza Velez Eduardo \\
+            Dirigido a: & Biedma Luis \\
+                        & Armas Claudio \\
+            Lugar y Fecha: & 15/11/2026 \\
+        \end{tabular}
+    \end{flushright}
+    
+\end{titlepage}
+
+% ------------------------------------------------------------------------------
+% 2. RESUMEN EJECUTIVO E ÍNDICE
+% ------------------------------------------------------------------------------
+\pagenumbering{roman} % Numeración romana para páginas preliminares
+
+\begin{calloutbox}
+    % Este espacio está diseñado para sintetizar en 1 o 2 párrafos el propósito del informe, la metodología empleada, los hallazgos principales y las recomendaciones clave. Debe permitir al lector comprender el valor del documento sin necesidad de leerlo en su totalidad.
+    En este informe veremos cómo Diagonalizar una matriz tridiagonal $T \in \mathbb{R}^{N \times N}$, con complejidad temporal $O(N^2\rm{log^2}(\frac1\varepsilon))$ con el algoritmo presentado en [1], con un error numérico $O(N \varepsilon \| T\|_2 )$, detalles de implementación sobre el redondeo y complejidades finales tanto de error numérico como de complejidad temporal.\\
+    
+    Finalmente, con una implementación hecha en python, con peor cota temporal por simplicidad, compararemos las aproximaciones de los autovectores hechos por nuestra implementación contra las presentadas en [1] y con una implementación propia de $QR$.
+
+
+
+    \vspace{0.4em}
+\end{calloutbox}
+
+\vspace{0.5cm}
+\tableofcontents
+% Descomenta las siguientes líneas si deseas incluir índice de figuras y tablas:
+% \listoffigures
+% \listoftables
+
+\clearpage
+\pagenumbering{arabic} % Numeración arábiga para el cuerpo del informe
+
+% ------------------------------------------------------------------------------
+% 3. CUERPO DEL INFORME
+% ------------------------------------------------------------------------------
+
+\section{Introducción}
+% En esta sección se presenta el contexto general del problema o proyecto abordado, los antecedentes relevantes y la justificación de por qué se elabora este informe \cite{referencia1}.
+Dada una matriz tridiagonal $T\in \mathbb{R}^{N\times N}:$\\
+
+$$T=\begin{pmatrix}
+    \alpha_1 & \beta_2 &  &  &  \\
+    \beta_2 & \alpha_2 & \beta_3 & & \\
+     & \ddots & \ddots & \ddots &  \\
+     & & \beta_{N-1} & \alpha_{N-1} & \beta_N \\
+     & & & \beta_N & \alpha_N \\
+\end{pmatrix}$$
+
+El problema de autovalores de una simétrica tridiagonal es encontrar la descomposición espectral $T=X \Lambda X^T$, donde $\Lambda$ es diagonal y $X$ es unitaria. Para resolver eso nos aprovecharemos de una recursividad \textit{Divide and conquer}, resolviendo dos subproblemas de submatrices de tamaño $\thickapprox \frac N2$ y construiremos con ellos una matriz $Q$ unitaria y $H$ tal que $T=QHQ^T$ y $H$ es \textbf{flecha} simétrica:\\
+$$H=\begin{pmatrix}
+    \alpha & z^T \\
+    z & D
+\end{pmatrix}$$ 
+donde $\alpha \in \mathbb{R}, z\in \mathbb{R}^N$ y $D \in \mathbb{R}^{N \times N}$ es diagonal. Finalmente hallaremos los autovalores de $T$ construyendo la descomposición espectral de $H=U \Lambda U^T$, donde $U$ es una matriz unitaria, y los autovectores de $T$ son las columnas de $QU$. \\
+
+Como última definición interna introductoria, diremos que una descomposición espectral numérica es de la forma:\\
+
+\begin{equation}
+    T=\hat{X}\hat{\Lambda}\hat{X}^T+O(\varepsilon \|T\|_2) 
+\end{equation}
+
+Donde la notación big-$O$ considera constante la dimensión $N$, $\varepsilon$ es el épsilon de la máquina, $\hat{\Lambda}$ es una matriz diagonal y $\hat{X}$ es una matriz numéricamente ortogonal. Un algoritmo que produce dicha descomposición se dirá estable.
+
+Tomaremos también el modelo usual de aritmética donde:
+$$\rm{fl}(x \heartsuit y)= (x \heartsuit y)(1+\xi)$$
+donde $x,y$ son números de punto flotante, $\heartsuit$ es una de $+,-,\times,\div$. $\rm{fl}(x \heartsuit y)$ es el resultado en punto flotante de $x \heartsuit y$, y $ \mid \xi \mid \leq \varepsilon$. Asumiremos análogamente con la operación unaria $\surd~~:$
+
+$$\rm{fl}(\sqrt x)=\sqrt x (1+\xi)$$
+
+
+\section{Dividir la Matriz y caso base}
+
+Si $N=1$ entonces $T$ es diagonal. Si $N=2$ podemos aplicar el método de Jacobi para una $2 \times 2$ para diagonalizarla con alta precisión, obteniendo la correspondiente rotación de Givens como matriz ortogonal. De ahora en adelante asumamos $N\geq 3$.\\
+
+sea $1<k<N$, entonces dividiremos a $T$ en bloques:
+
+$$T=\begin{pmatrix}
+        T_1 & \beta_{k+1} e_k & 0 \\
+        \beta_{k+1} e_k^T & \alpha_{k+1} & \beta_{k+2} e_1^T \\
+        0 & \beta_{k+2} e_1 & T_2
+\end{pmatrix}$$
+
+    donde $T_1$ es una matriz $k\times k$, $T_2$ es una matriz $(N-k-1) \times (N-k-1)$ y $e_i$ es el vector base canónico con un $1$ en la $i$-ésima componente. Si $Q_iD_iQ_i^T$ es la descomposición espectral de $T_i:$
+
+    $$T=\begin{pmatrix}
+        Q_1 D_1 Q_1^T & \beta_{k+1} e_k & 0 \\
+        \beta_{k+1} e_k^T & \alpha_{k+1} & \beta_{k+2} e_1^T \\
+        0 & \beta_{k+2} e_1 & Q_2 D_2 Q_2^T
+\end{pmatrix}= \begin{pmatrix}
+        0 & Q_1 & 0 \\
+        1 & 0 & 0 \\
+        0 & 0 & Q_2  
+\end{pmatrix} \begin{pmatrix}
+        \alpha_{k+1} & \beta_{k+1} \ell_1^T & \beta_{k+2} f_2^T \\
+        \beta_{k+1} \ell_1 & D_1 & 0 \\
+        \beta_{k+2} f_2 & 0 & D_2 
+\end{pmatrix}  \begin{pmatrix}
+        0 & 1 & 0 \\
+        Q_1^T & 0 & 0 \\
+        0 & 0 & Q_2^T  
+\end{pmatrix}$$
+$$\equiv QHQ^T$$
+Donde $\ell_1^T$ es la ultima fila de $Q_1$ y $f_2^T$ es la primera fila de $Q_2$. Por lo que $T$ es ortogonalmente similar a $H$, y nos dedicaremos a descomponer espectralmente a $H$.\\
+A lo sumo van a haber $O(\rm{log}(N))$ niveles de recursión en el \textit{DnC} (Divide and Conquer).
+\section{Resultados y Análisis}
+    
+
+\subsection{Comparativa de Indicadores}
+La Tabla~\ref{tab:resultados} muestra un formato limpio y profesional utilizando el paquete \texttt{booktabs}:
+
+\begin{table}[H]
+    \centering
+    \caption{Resumen comparativo de resultados por escenario evaluado}
+    \label{tab:resultados}
+    \begin{tabular}{@{} l c c c @{}}
+        \toprule
+        \textbf{Indicador / Métrica} & \textbf{Línea Base} & \textbf{Escenario Propuesto} & \textbf{Variación (\%)} \\
+        \midrule
+        Tiempo de procesamiento (s)  & 42,5 & 18,2 & $-57,2\%$ \\
+        Eficiencia operativa (\%)    & 68,0 & 89,4 & $+21,4\%$ \\
+        Costo mensual estimado (USD) & 1.250 & 980  & $-21,6\%$ \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\subsection{Visualización de Datos}
+Para insertar una imagen externa (PNG, JPG o PDF vectorial), utiliza la estructura mostrada en la Figura~\ref{fig:ejemplo}:
+
+\begin{figure}[H]
+    \centering
+    % Descomenta la siguiente línea y coloca el nombre de tu archivo de imagen:
+    % \includegraphics[width=0.75\textwidth]{grafico_resultados.png}
+    \begin{tcolorbox}[width=0.75\textwidth, height=4cm, colback=LightBg, colframe=BorderGray, valign=center, halign=center]
+        \textcolor{TextMuted}{[Espacio reservado para gráfico o diagrama — Reemplazar con \texttt{\textbackslash includegraphics}]}
+    \end{tcolorbox}
+    \caption{Evolución de los indicadores clave durante el período de evaluación}
+    \label{fig:ejemplo}
+\end{figure}
+
+\begin{calloutbox}[Hallazgo Principal]
+    La implementación del escenario propuesto reduce los tiempos operativos en más de un 50\%, manteniendo un margen de confiabilidad superior al 95\% bajo condiciones normales de operación.
+\end{calloutbox}
+
+% ------------------------------------------------------------------------------
+\section{Conclusiones y Recomendaciones}
+
+\subsection{Conclusiones}
+\begin{itemize}
+    \item \textbf{Conclusión 1:} [Síntesis del primer hallazgo relevante respaldado por los datos.]
+    \item \textbf{Conclusión 2:} [Síntesis del segundo hallazgo relevante.]
+    \item \textbf{Conclusión 3:} [Valoración final respecto al cumplimiento de los objetivos planteados.]
+\end{itemize}
+
+\subsection{Recomendaciones}
+\begin{enumerate}
+    \item \textbf{Corto plazo:} [Acción concreta recomendada, responsable sugerido y plazo estimado.]
+    \item \textbf{Mediano plazo:} [Acción estratégica de mejora o escalamiento.]
+\end{enumerate}
+
+% ------------------------------------------------------------------------------
+% 4. REFERENCIAS BIBLIOGRÁFICAS
+% ------------------------------------------------------------------------------
+\begin{thebibliography}{9}
+    \bibitem{referencia1}
+    Apellido, N. (2025). \textit{Título del libro, norma técnica o artículo consultado}. Editorial o Revista, Vol.(Núm.), pp. 1--25.
+    
+    \bibitem{referencia2}
+    Organización o Institución. (2026). \textit{Título del informe de referencia}. Disponible en: \url{https://ejemplo.org}
+\end{thebibliography}
+
+% ------------------------------------------------------------------------------
+% 5. APÉNDICES (OPCIONAL)
+% ------------------------------------------------------------------------------
+\clearpage
+\appendix
+\section{Documentación Complementaria}
+[Este espacio puede utilizarse para incluir tablas extensas, fichas técnicas, fragmentos de código o cuestionarios utilizados durante el levantamiento de información.]
+
+\end{document}
