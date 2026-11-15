@@ -284,11 +284,11 @@ El siguiente lema caracteriza los autovalores de una matriz flecha simétrica:
     \end{equation}
     y cada autovector $u_i$ de $\lambda_i$ es de la forma:
     \begin{equation}
-     u_i = \frac{\left( -1 , \frac{z_2}{d_2-\lambda_i}, \cdots , \frac{z_n}{d_n -\lambda_i} \right)^T}{\sqrt{1+\Sum_{j=2}^N \frac{z_j^2} {\left(d_j -\lambda\right)^2}}} 
+     u_i = \frac{\left( -1 , \frac{z_2}{d_2-\lambda_i}, \cdots , \frac{z_n}{d_n -\lambda_i} \right)^T}{\sqrt{1+\Sum_{j=2}^N \frac{z_j^2} {\left(d_j -\lambda_i\right)^2}}} 
     \end{equation}
 \end{lema}
 
-Y el siguiente lema nos permite reconstruir una matriz flecha $\hat{H}= H +O(\varepsilon \| H\|_2)$ en base a una aproximación $\left \lbrace \hat{\lambda}_i \right \rbrace_{i=1}^N$.
+Y el siguiente lema nos permite reconstruir una matriz flecha simétrica $\hat{H}= H +O(\varepsilon \| H\|_2)$ en base a una aproximación $\left \lbrace \hat{\lambda}_i \right \rbrace_{i=1}^N$.
 
 \begin{lema}
     Sea $\left \lbrace d_i\right \rbrace_{i=2}^N$ y $\left \lbrace \hat{\lambda_i} \right \rbrace_{i=1}^N$ tales que cumplan la propiedad intercalada, entonces existe una matriz flecha simétrica 
@@ -330,7 +330,7 @@ ahora, como $psi_i$ y $phi_i$ son sumas del mismo signo, podemos acotar el error
 
 $$\eta E_{\small\rm{suma}}(N) \left(\mid \mu \mid+ \mid \alpha_i \mid+ \mid \psi_i(\mu) \mid + \mid \phi_i(\mu) \mid\right)$$
 
-Donde $\eta$ es un múltiplo pequeño de $\varepsilon$ independiente de $N$ y $\mu$, y $E_{\small\rm{suma}}(N)$ es el error de sumar $N$ términos en una suma del mismo signo de punto flotante, por lo que $E_{\small\rm{suma}}(N) = O(N)$ si se suma de forma naive elemento a elemento, $O(log(N))$ si se usa un arbol binario para evaluar (o simplemente otro \textit{DnC} sobre el arreglo de sumandos), o sino $O(1)$ si se usan métodos más sostificados ([CITA]).\\
+Donde $\eta$ es un múltiplo pequeño de $\varepsilon$ independiente de $N$ y $\mu$, y $E_{\small\rm{suma}}(N)$ es el error de sumar $N$ términos en una suma del mismo signo de punto flotante, por lo que $E_{\small\rm{suma}}(N) = O(N)$ si se suma de forma naive elemento a elemento, $O(log(N))$ si se usa un arbol binario para evaluar (es decir, otro \textit{DnC} sobre el arreglo de sumandos), o sino $O(1)$ si se usan métodos más sostificados ([CITA]).\\
 
 Como el método de encontrar raíces puede demorarse mucho debido a la imposibilidad de decidir el signo de $g_i$, el artículo [1] propone el \textit{stop criterion}, que finalize la búsqueda si se encuentra un $\mu$ tal que:
 $$\mid g_i (\mu) \mid \leq \eta E_{\small\rm{suma}}(N) \left(\mid \mu \mid+ \mid \alpha_i \mid+ \mid \psi_i(\mu) \mid + \mid \phi_i(\mu) \mid\right)$$
@@ -462,9 +462,9 @@ Fast Multipole Method (FMM) es un algoritmo que dada una función
 
 $$\Phi(\zeta) = \Sum_{j=1}^n c_j \phi(\xi_j-\zeta)$$
 
-donde $\zeta\in \mathbb{C}$, y $phi$ es una de $\frac{1}{\zeta}, \frac{1}{\zeta^2}$ o $\rm{log}(\zeta)$. Permite multievaluar a $\Phi$ en $m$ puntos $\zeta_1, \dots, \zeta_m$ en tiempo $O((n+m) \rm{log}^2(\frac{1}{\varepsilon}))$. Se puede optimizar el algoritmo aprovechándonos que, en este caso, $\zeta \in \R$. Hacer esto trivialmente nos acelera las evaluaciones de la búsqueda de raíces de la función secular $f$. Además notemos que pode la forma de los autovectores $u_i$ de la flecha y ver que, dado un vector arbitrario $q$:
+donde $\zeta\in \mathbb{C}$, y $\Phi$ es una de $\frac{1}{\zeta}, \frac{1}{\zeta^2}$ o $\rm{log}(\zeta)$. Permite multievaluar a $\Phi$ en $m$ puntos $\zeta_1, \dots, \zeta_m$ en tiempo $O((n+m) \rm{log}^2(\frac{1}{\varepsilon}))$. Se puede optimizar el algoritmo aprovechándonos que, en este caso, $\zeta \in \R$. Hacer esto trivialmente nos acelera las evaluaciones de la búsqueda de raíces de la función secular $f$. Además notemos que pode la forma de los autovectores $u_i$ de la flecha y ver que, dado un vector arbitrario $q$:
 
-$$u_i^T q= \frac{-q_1+\Phi_1(\lambda_i)}{\sqrt(1+\Phi_2(\lambda_i))}$$
+$$u_i^T q= \frac{-q_1+\Phi_1(\lambda_i)}{\sqrt{1+\Phi_2(\lambda_i)}}$$
 
 donde :
 $$\Phi_1(\lambda)= \Sum_{k=2}^N \frac{z_k q_k}{d_k-\lambda} && \Phi_2(\lambda)=\Sum_{k=2}^N \left(\frac{z_k}{d_k-\lambda}\right)^2$$
