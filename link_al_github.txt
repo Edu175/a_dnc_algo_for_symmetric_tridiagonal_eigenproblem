@@ -1,0 +1,3 @@
+Acá está todo el código, ver el README.txt para las instrucciones (agregamos como archivo también el readme y el informe, pero lo pueden ver en el github a todo).
+
+https://github.com/Edu175/a_dnc_algo_for_symmetric_tridiagonal_eigenproblem
