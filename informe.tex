@@ -199,7 +199,7 @@ $$H=\begin{pmatrix}
     \alpha & z^T \\
     z & D
 \end{pmatrix}$$ 
-donde $\alpha \in \R, z\in \R^N$ y $D \in \R^{(N-1) \times (N-1)}$ es diagonal. Finalmente hallaremos los autovalores de $T$ construyendo la descomposición espectral de $H=U \Lambda U^T$, donde $U$ es una matriz unitaria, y los autovectores de $T$ son las columnas de $QU$. \\
+donde $\alpha \in \R, z\in \R^{N-1}$ y $D \in \R^{(N-1) \times (N-1)}$ es diagonal. Finalmente hallaremos los autovalores de $T$ construyendo la descomposición espectral de $H=U \Lambda U^T$, donde $U$ es una matriz unitaria, y los autovectores de $T$ son las columnas de $QU$. \\
 
 Como última definición interna introductoria, diremos que una descomposición espectral numérica es de la forma:\\
 
@@ -281,7 +281,7 @@ El siguiente lema caracteriza los autovalores de una matriz flecha simétrica:
     \end{equation}
     y cada autovector $u_i$ de $\lambda_i$ es de la forma:
     \begin{equation}
-     u_i = \frac{\left( -1 , \frac{z_2}{d_2-\lambda_i}, \cdots , \frac{z_n}{d_n -\lambda_i} \right)^T}{\sqrt{1+\Sum_{j=2}^N \frac{z_j^2} {\left(d_j -\lambda_i\right)^2}}} 
+     u_i = \frac{\left( -1 , \frac{z_2}{d_2-\lambda_i}, \cdots , \frac{z_N}{d_N -\lambda_i} \right)^T}{\sqrt{1+\Sum_{j=2}^N \frac{z_j^2} {\left(d_j -\lambda_i\right)^2}}}
     \end{equation}
 \end{lema}
 
@@ -298,9 +298,8 @@ Y el siguiente lema nos permite reconstruir una matriz flecha simétrica $\hat{H
     Además se cumple:
     
     \begin{equation}
-        |\hat{z}_i|= \sqrt{ (\hat{\lambda}_1 - d_i) (d_i-\hat{\lambda}_N) \Prod_{j=2}^{i-1} \frac{d_i -\hat{\lambda}_j}{d_i - d_j} \Prod_{j=i}^{N-1} \frac{\hat{\lambda}_i- d_i}{d_{j+1} -d_i} }
+        |\hat{z}_i|= \sqrt{ (\hat{\lambda}_1 - d_i) (d_i-\hat{\lambda}_N) \Prod_{j=2}^{i-1} \frac{d_i -\hat{\lambda}_j}{d_i - d_j} \Prod_{j=i}^{N-1} \frac{\hat{\lambda}_j- d_i}{d_{j+1} -d_i} }
     \end{equation}
-    \\
     \begin{equation}
         \hat{\alpha}= \hat{\lambda}_1 + \Sum_{j=2}^N  (\hat{\lambda}_j -d_j)
     \end{equation}
@@ -310,7 +309,7 @@ Y el siguiente lema nos permite reconstruir una matriz flecha simétrica $\hat{H
 
 \subsection{Computar los autovalores}
 
-Dado que $\lambda_i \in (d_i, d_{i+1})$ para $2\leq i \leq N-1$, $\lambda_1 \in \left(d_2-\|z\|_2 -\mid \alpha \mid , d_2 \right) $ y $\lambda_N \in \left(d_N, d_N+\|z\|_2 +\mid \alpha \mid \right)$, podemos usar cualquier método numérico de búsqueda de raíces para hallar las raíces de la ecuación secular $f$. En el caso de nuestro algoritmo implementamos bisección, en el artículo \cite{gu1995} presenta mejores métodos más eficientes numéricamente para hallar los $\lambda_i$. \\
+Dado que $\lambda_i \in (d_i, d_{i+1})$ para $2\leq i \leq N-1$, $\lambda_1 \in \left(d_2-\|z\|_2 -|d_2-\alpha| , d_2 \right) $ y $\lambda_N \in \left(d_N, d_N+\|z\|_2 + |d_N-\alpha| \right)$, podemos usar cualquier método numérico de búsqueda de raíces para hallar las raíces de la ecuación secular $f$. En el caso de nuestro algoritmo implementamos bisección, en el artículo \cite{gu1995} presenta mejores métodos más eficientes numéricamente para hallar los $\lambda_i$. \\
 
 En la búsqueda de los autovalores, para mejorar la precisión, buscamos el $i$-ésimo autovalor $\lambda_i=d_{c_i}+\mu_i$ buscando a $\mu_i$ raíz de:
 $$g_i(\mu):=f(\mu+d_{c_i})\equiv \mu +\alpha_i +\psi_i(\mu) + \phi_i(\mu)$$
@@ -325,31 +324,31 @@ $$c_i=\begin{cases}
 
 \normalsize ahora, como $\psi_i$ y $\phi_i$ son sumas del mismo signo, podemos acotar el error de computar $g_i(\mu)$ por:
 
-$$\eta E_{\small\rm{suma}}(N) \left(\mid \mu \mid+ \mid \alpha_i \mid+ \mid \psi_i(\mu) \mid + \mid \phi_i(\mu) \mid\right)$$
+$$\eta E_{\texttt{\small suma}}(N) \left(\mid \mu \mid+ \mid \alpha_i \mid+ \mid \psi_i(\mu) \mid + \mid \phi_i(\mu) \mid\right)$$
 
-Donde $\eta$ es un múltiplo pequeño de $\varepsilon$ independiente de $N$ y $\mu$, y $E_{\small\rm{suma}}(N)$ es el error de sumar $N$ términos en una suma del mismo signo de punto flotante, por lo que $E_{\small\rm{suma}}(N) = O(N)$ si se suma de forma \textit{naive} elemento a elemento, $O(\rm{log}(N))$ si se usa un arbol binario para evaluar (es decir, otro \textit{DnC} sobre el arreglo de sumandos), o sino $O(1)$ si se usan métodos más sostificados (\cite{ExactSum}).\\
+Donde $\eta$ es un múltiplo pequeño de $\varepsilon$ independiente de $N$ y $\mu$, y $E_{\texttt{\small suma}}(N)$ es el error de sumar $N$ términos en una suma del mismo signo de punto flotante, por lo que $E_{\texttt{\small suma}}(N) = O(N)$ si se suma de forma \textit{naive} elemento a elemento, $O(\log(N))$ si se usa un arbol binario para evaluar (es decir, otro \textit{DnC} sobre el arreglo de sumandos), o sino $O(1)$ si se usan métodos más sofisticados (\cite{ExactSum}).\\
 
 Como el método de encontrar raíces puede demorarse mucho debido a la imposibilidad de decidir el signo de $g_i$, el artículo \cite{gu1995} propone el \textit{stop criterion}, que finalice la búsqueda si se encuentra un $\mu$ tal que:
-$$\mid g_i (\mu) \mid \leq \eta E_{\small\rm{suma}}(N) \left(\mid \mu \mid+ \mid \alpha_i \mid+ \mid \psi_i(\mu) \mid + \mid \phi_i(\mu) \mid\right)$$
+$$\mid g_i (\mu) \mid \leq \eta E_{\texttt{\small suma}}(N) \left(\mid \mu \mid+ \mid \alpha_i \mid+ \mid \psi_i(\mu) \mid + \mid \phi_i(\mu) \mid\right)$$
 
-Nótese que existe al menos un punto flotante que cumple el \textit{stop criterion}, debido a la cota del error. En el caso de nuestra implementación, llamamos a \rm{np.sum}, que usa un arbol binario, por lo que tendremos nosotros $ E_{\small\rm{suma}}(N)=O(log(N))$, que se puede mejorar con implementaciones más sostificadas de punto flotante. \\
+Nótese que existe al menos un punto flotante que cumple el \textit{stop criterion}, debido a la cota del error. En el caso de nuestra implementación, llamamos a \rm{np.sum}, que usa un arbol binario, por lo que tendremos nosotros $ E_{\texttt{\small suma}}(N)=O(\log(N))$, que se puede mejorar con implementaciones más sofisticadas de punto flotante. \\
 
 Como pequeño caso borde de implementación, debido a la deflación que explicaremos en la siguiente sección, podríamos querer hallar los autovalores de una matriz $H$ de dimensiones $1 \times 1$, la cual no tiene la propiedad intercalada ni muchas cosas que asumimos antes, por lo que simplemente hay que agregar el pequeño caso de que si $H$ es  $1 \times 1$, entonces la función de búsqueda de autovalores de la matriz flecha simplemente tiene que devolver $H_{1,1}$.\\
 
 \subsection{Estabilidad Numérica}
 
-Para no repetir las cuentas presentadas en \cite{gu1995}, si tomamos $\tau=6 \eta N E_{\small\rm{suma}}(N) \| H\|_2$, y tomando $\hat{z}_i$ del mismo signo que $z_i$, podemos demostrar que:
+Para no repetir las cuentas presentadas en \cite{gu1995}, si tomamos $\tau=6 \eta N E_{\texttt{\small suma}}(N)$, y tomando $\hat{z}_i$ del mismo signo que $z_i$, podemos demostrar que:
 
-$$\mid z_i - \hat{z}_i \mid \leq 6 \eta N E_{\small\rm{suma}}(N) \| H\|_2= 6 \tau \|H\|_2= O(\tau \|H\|_2)$$
+$$\mid z_i - \hat{z}_i \mid \leq 6 \eta N E_{\texttt{\small suma}}(N) \| H\|_2= \tau \|H\|_2$$
 
-que es lo mejor que podemos hacer, asimptóticamente hablando teniendo en cuenta que el 'épsilon' de la matriz es $\tau \|H\|_2$.\\
+que es lo mejor que podemos hacer, asintóticamente hablando teniendo en cuenta que el `épsilon' de la matriz es $\tau \|H\|_2$.\\
 
 Para fines de nuestro proyecto, no nos interesa el error de $\hat{\alpha}$ con $\alpha$, debido a que no va a ser usado $\hat{\alpha}$ en todo el algoritmo.\\
 
 \section{Deflación}
 
 
-Acá demostraremos que podemos reducir cualqueir matriz $H$ flecha simétrica a una que cumpla $(2)$. \\
+Acá demostraremos que podemos reducir cualquier matriz $H$ flecha simétrica a una que cumpla $(2)$. \\
 
 Supongamos que $\mid z_i \mid < \tau \|H\|_2$, entonces:
 
@@ -440,7 +439,7 @@ Pero tras la deflación, para mantener el error numérico, ignoramos los autoval
 $$\tilde{Q}=\begin{pmatrix} 
     0 & \tilde{Q}_{0,1} & \tilde{Q}_1 & 0 \\
     1 & 0 & 0 & 0 \\
-    0 & \tilde{Q}_{0,2} & 0 & \tilde{Q}_2 & 0
+    0 & \tilde{Q}_{0,2} & 0 & \tilde{Q}_2
 \end{pmatrix}$$
 
 el detalle de las cuentas están en la sección $4.2$ de \cite{gu1995}. Esto mejora el rendimiento del algoritmo si nos aprovechamos la estructura de bloques de $\tilde{Q}$ al computar el producto $\tilde{Q}U$. Nuestra implementación no se aprovecha de ello, debido a la dificultad de la implementación y el hecho que la recursividad de python y el manejar listas probablemente empeoraría esa mejora por constante que tratábamos de hacer.\\
@@ -459,44 +458,44 @@ Fast Multipole Method (FMM) es un algoritmo que dada una función
 \begin{equation}
 \Phi(\zeta) = \Sum_{j=1}^n c_j \phi(\xi_j-\zeta)
 \end{equation}
-donde $\zeta,c_j\in \mathbb{C}$, y $\phi$ es una de $\frac{1}{\zeta}, \frac{1}{\zeta^2}$ o $\rm{log}(\zeta)$. Permite multievaluar a $\Phi$ en $m$ puntos $\zeta_1, \dots, \zeta_m$ en tiempo $O((n+m) \rm{log}^2(\frac{1}{\varepsilon}))$ \cite{gu1994}. Se puede optimizar el algoritmo aprovechándonos que, en este caso, todos los coeficientes y los $\zeta$ son reales. Hacer esto trivialmente nos acelera las evaluaciones de la búsqueda de raíces de la función secular $f$. Además notemos que por la forma de los autovectores $u_i$ de $H$ y ver que, dado un vector arbitrario $q$:
+donde $\zeta,c_j\in \mathbb{C}$, y $\phi$ es una de $\frac{1}{\zeta}, \frac{1}{\zeta^2}$ o $\log(\zeta)$. Permite multievaluar a $\Phi$ en $m$ puntos $\zeta_1, \dots, \zeta_m$ en tiempo $O((n+m) \log^2(\frac{1}{\varepsilon}))$ \cite{gu1994}. Se puede optimizar el algoritmo aprovechándonos que, en este caso, todos los coeficientes y los $\zeta$ son reales. Hacer esto trivialmente nos acelera las evaluaciones de la búsqueda de raíces de la función secular $f$. Además notemos que por la forma de los autovectores $u_i$ de $H$ y ver que, dado un vector arbitrario $q$:
 
 $$u_i^T q= \frac{-q_1+\Phi_1(\lambda_i)}{\sqrt{1+\Phi_2(\lambda_i)}}$$
 
 donde :
 $$\Phi_1(\lambda)= \Sum_{k=2}^N \frac{z_k q_k}{d_k-\lambda} ~~~~~~~~~~~~~ \Phi_2(\lambda)=\Sum_{k=2}^N \left(\frac{z_k}{d_k-\lambda}\right)^2$$
 
-Por lo que cada fila de $\tilde{Q}U$ es de la forma $q^TU=\left(U^Tq\right)^T$, cuyas componentes son de la forma $u_i^Tq$ y hay $N$ filas, por lo que el costo de evaluar todas las componentes de todas las filas es $O(N^2\rm{log}^2(\frac1{\varepsilon}))$.
+Por lo que cada fila de $\tilde{Q}U$ es de la forma $q^TU=\left(U^Tq\right)^T$, cuyas componentes son de la forma $u_i^Tq$ y hay $N$ filas, por lo que el costo de evaluar todas las componentes de todas las filas es $O(N^2\log^2(\frac1{\varepsilon}))$.
 
 \section{Conteo operacional y de error}
 
 
-Asumamos que estamos en el $m$-ésimo nivel del DnC, por lo que estamos trabajando con una matriz $\tilde T$ tridiagonal $n\times n$, $n = O\left(\frac N {2^m}\right)$ que descomponeremos espectralmente, y resolveremos en este nivel $O(\frac{N} n)= O(2^m)$ problemas de este estilo.\\
+Asumamos que estamos en el $m$-ésimo nivel del DnC, por lo que estamos trabajando con una matriz $\tilde T$ tridiagonal $n\times n$, $n = O\left(\frac N {2^m}\right)$ que descompondremos espectralmente, y resolveremos en este nivel $O(\frac{N} n)= O(2^m)$ problemas de este estilo.\\
 
-Para $n\leq 2$, entonces $m=O(\rm{log}(N))$ y resolvemos Jacobi para $2\times 2$, que es $O(1)$ por cada matriz, como resolveremos $O(2^{\rm{log}(N)})=O(N)$ de estos problemas, este nivel final cuesta $O(N \cdot 1)=O(N)$.\\
+Para $n\leq 2$, entonces $m=O(\log(N))$ y resolvemos Jacobi para $2\times 2$, que es $O(1)$ por cada matriz, como resolveremos $O(2^{\log(N)})=O(N)$ de estos problemas, este nivel final cuesta $O(N \cdot 1)=O(N)$.\\
 
 Para $n>2$, nuestro algoritmo va a resolver el subproblema de $\tilde T _1, \tilde T_2$, que serán contadas en el conteo operacional del $(m+1)$-ésimo nivel.\\
 
 Después aplicamos todas las deflaciones posibles de $H$, hay $O(n)$ posibles deflaciones, y por cada deflación cuesta $O(n)$ aplicar la permutación para mantener la estructura de bloques, y el producto $QG$ en las deflaciones del segundo tipo se pueden realizar en $O(n)$, por lo que la deflación tiene complejidad $O(n \cdot n)=O(n^2)$, con error $O(\tau \|H\|_2)$.\\
 
-El siguiente paso es hallar los autovalores de $\tilde{H}$, multievaluar con FMM a la función $g_i$ para todos los $i$ cuesta $O(n\rm{log}^2(\frac1\varepsilon))$, usando bisección o interpolación racional se nos agrega un factor $O(\rm{log}(\frac1\varepsilon))$, por lo que la complejidad de bisección implementada óptimamente queda $O(n\rm{log}^3(\frac1\varepsilon))$. En nuestra implementación sin FMM queda $O(n^2\rm{log}(\frac1\varepsilon))$ con error $O(\eta \rm{log}(n))$, el error se puede reducir a $O(\eta)$ sumando con \cite{ExactSum}. \\
+El siguiente paso es hallar los autovalores de $\tilde{H}$, multievaluar con FMM a la función $g_i$ para todos los $i$ cuesta $O(n\log^2(\frac1\varepsilon))$, usando bisección o interpolación racional se nos agrega un factor $O(\log(\frac1\varepsilon))$, por lo que la complejidad de bisección implementada óptimamente queda $O(n\log^3(\frac1\varepsilon))$. En nuestra implementación sin FMM queda $O(n^2\log(\frac1\varepsilon))$ con error $O(\eta \log(n))$, el error se puede reducir a $O(\eta)$ sumando con \cite{ExactSum}. \\
 
-Después el algoritmo computa la aproximación $\hat{z}$, lo cual se puede hacer en $O(n\rm{log}^2(\frac1\varepsilon))$ con FMM reescribiendo la productoria en $(5)$ por una exponencial elevada a una sumatoria de logaritmos, tal sumatoria es de la forma de $(7)$. De nuevo, al no tener FMM, lo hacemos en $O(n^2)$ con error $O(\rm{log}(n)\varepsilon)$.\\
+Después el algoritmo computa la aproximación $\hat{z}$, lo cual se puede hacer en $O(n\log^2(\frac1\varepsilon))$ con FMM reescribiendo la productoria en $(5)$ por una exponencial elevada a una sumatoria de logaritmos, tal sumatoria es de la forma de $(7)$. De nuevo, al no tener FMM, lo hacemos en $O(n^2)$ con error $O(\log(n)\varepsilon)$.\\
 
-Finalmente computar todos los valores posibles de $\Phi_2$ es $O(n\rm{log}^2(\frac1\varepsilon))$ con FMM (pues $\Phi_2$ no depende de la fila ni columna de $\tilde Q$ que iteremos), nosotros en $O(n^2)$ a lo bruto, con un error $O(\rm{log}(n)\varepsilon)$. Y computar todas las posibles evaluaciones de $\Phi_1$ es $O(n) \cdot O(n\rm{log}^2(\frac1\varepsilon)) = O(n^2\rm{log}^2(\frac1\varepsilon))$ con FMM, el factor $n$ extra es porque $\Phi_1$ depende de la fila que iteramos de $\tilde Q$. Con nuestra implementación simplemente queda complejidad $O(n^3)$ con error $O(\rm{log}(n)\varepsilon)$.\\
+Finalmente computar todos los valores posibles de $\Phi_2$ es $O(n\log^2(\frac1\varepsilon))$ con FMM (pues $\Phi_2$ no depende de la fila ni columna de $\tilde Q$ que iteremos), nosotros en $O(n^2)$ a lo bruto, con un error $O(\log(n)\varepsilon)$. Y computar todas las posibles evaluaciones de $\Phi_1$ es $O(n) \cdot O(n\log^2(\frac1\varepsilon)) = O(n^2\log^2(\frac1\varepsilon))$ con FMM, el factor $n$ extra es porque $\Phi_1$ depende de la fila que iteramos de $\tilde Q$. Con nuestra implementación simplemente queda complejidad $O(n^3)$ con error $O(\log(n)\varepsilon)$.\\
 
-Finalmente en el $m$-ésimo nivel se hacen $$O\left(\frac Nn\right) \cdot \left[O(n^2)+O\left(n \rm{log}^3\left(\frac1\varepsilon\right)\right)+O\left(n\rm{log}\left(\frac1\varepsilon\right)\right)+ O\left(n^2\rm{log}^2\left(\frac1\varepsilon\right)\right)\right]$$
-$$=O\left(Nn\rm{log}^2\left(\frac1\varepsilon\right)\right)$$
+Finalmente en el $m$-ésimo nivel se hacen $$O\left(\frac Nn\right) \cdot \left[O(n^2)+O\left(n \log^3\left(\frac1\varepsilon\right)\right)+O\left(n\log^2\left(\frac1\varepsilon\right)\right)+ O\left(n^2\log^2\left(\frac1\varepsilon\right)\right)\right]$$
+$$=O\left(Nn\log^2\left(\frac1\varepsilon\right)\right)$$
 
-Y sumando en todos los niveles $1\leq m \leq O(\rm{log}(N))$ nos queda:
+Y sumando en todos los niveles $1\leq m \leq O(\log(N))$ nos queda:
 
-$$\Sum_{m=1}^{O(\rm{log}(N))} O\left(Nn\rm{log}^2\left(\frac1\varepsilon\right)\right) = O\left(\rm{log}^2\left( \frac1\varepsilon\right)\right)\Sum_{m=1}^{O(\rm{log}(N))} O\left(N\cdot \frac N{2^m}\right)$$
-$$= O\left(N^2\rm{log}^2\left( \frac1\varepsilon\right)\right)\Sum_{m=1}^{O(\rm{log}(N))} \frac1{2^m} \leq  O\left(N^2\rm{log}^2\left( \frac1\varepsilon\right)\right)\Sum_{m=1}^{\infty} \frac1 {2^m} = O\left(N^2\rm{log}^2\left( \frac1\varepsilon\right)\right)$$
+$$\Sum_{m=1}^{O(\log(N))} O\left(Nn\log^2\left(\frac1\varepsilon\right)\right) = O\left(\log^2\left( \frac1\varepsilon\right)\right)\Sum_{m=1}^{O(\log(N))} O\left(N\cdot \frac N{2^m}\right)$$
+$$= O\left(N^2\log^2\left( \frac1\varepsilon\right)\right)\Sum_{m=1}^{O(\log(N))} \frac1{2^m} \leq  O\left(N^2\log^2\left( \frac1\varepsilon\right)\right)\Sum_{m=1}^{\infty} \frac1 {2^m} = O\left(N^2\log^2\left( \frac1\varepsilon\right)\right)$$
 
-Por lo que la complejidad final es $O\left(N^2\rm{log}^2\left( \frac1\varepsilon\right)\right)$ usando FMM.
+Por lo que la complejidad final es $O\left(N^2\log^2\left( \frac1\varepsilon\right)\right)$ usando FMM.
 
-En nuestra implementación el factor que domina es nuevamente calcular $\Phi_1$, que pasa de ser $O\left(n\rm{log}^2\left( \frac1\varepsilon\right)\right)$ a $O\left(n^2\right)$ con \texttt{np.sum}, así que el conteo operacional es simplemente $O(N^3)$, que se puede ver de forma análoga.\\
-    El error acumulado es $O(N\varepsilon \|T\|_2)$ por las $n$ deflaciones que son las más pesadas $O(\tau \|T\|_2)= O(N\varepsilon \|T\|_2)$ con FMM o con \cite{ExactSum}, sino será $O(N E_{\small\rm{suma}}(N) \varepsilon \|T\|_2)$. En nuestra implementación es $O(N \rm{log}(N) \varepsilon \|T\|_2)$.
+En nuestra implementación el factor que domina es nuevamente calcular $\Phi_1$, que pasa de ser $O\left(n\log^2\left( \frac1\varepsilon\right)\right)$ a $O\left(n^2\right)$ con \texttt{np.sum}, para cada fila de $\tilde Q$, así que el conteo operacional es simplemente $O(N^3)$, que se puede ver de forma análoga.\\
+    El error acumulado es $O(N\varepsilon \|T\|_2)$ por las $n$ deflaciones que son las más pesadas $O(\tau \|T\|_2)= O(N\varepsilon \|T\|_2)$ con FMM o con \cite{ExactSum}, sino será $O(N E_{\texttt{\small suma}}(N) \varepsilon \|T\|_2)$. En nuestra implementación es $O(N \log(N) \varepsilon \|T\|_2)$.
 
 
 
@@ -510,13 +509,13 @@ En nuestra implementación el factor que domina es nuevamente calcular $\Phi_1$,
 
 \section{Resultados y Análisis}
 
-En esta sección evaluamos nuestra implementación del algoritmo \textttt{ADC} y la contrastamos con las rutinas de referencia de la librería estándar \texttt{LAPACK} \cite{lapack}.
+En esta sección evaluamos nuestra implementación del algoritmo \texttt{ADC} y la contrastamos con las rutinas de referencia de la librería estándar \texttt{LAPACK} \cite{lapack}.
 
 \subsection{Métodos Comparados}
 Se midieron tres implementaciones sobre el mismo conjunto de matrices de prueba:
 \begin{itemize}
     \item \textbf{ADC Propio:} Nuestra implementación en Python del algoritmo descrito en \cite{gu1995}, utilizando \texttt{float128} ($\varepsilon_{\text{f128}} \approx 1.08 \times 10^{-19}$) con tolerancia $\eta = \text{dfl\_tol} = 10^{-10}$, búsqueda de raíces mediante bisección, evaluación de sumas con estructura de árbol binario (\texttt{np.sum}) y evaluación directa de las funciones $\Phi_1, \Phi_2, \Phi_3$ (sin aceleración por FMM ni explotación de bloques nulos en $\tilde{Q}$).
-    \item \textbf{ADC Referencia (\texttt{DSTEVD / DSTEDC}):} La implementación de referencia en \texttt{LAPACK} del método \textit{Divide and Conquer} estabilizado con la técnica de Gu y Eisenstat \cite{gu1995} (es la implementación mas cercana a la descrita en \cite{gu1995} que encontramos en \texttt{LAPACK}), ejecutada en doble precisión \texttt{float64} ($\varepsilon_{\text{f64}} \approx 2.22 \times 10^{-16}$).
+    \item \textbf{ADC Referencia (\texttt{DSTEVD / DSTEDC}):} La implementación de referencia en \texttt{LAPACK} del método \textit{Divide and Conquer} estabilizado con la técnica de Gu y Eisenstat \cite{gu1995} (es la implementación más cercana a la descrita en \cite{gu1995} que encontramos en \texttt{LAPACK}), ejecutada en doble precisión \texttt{float64} ($\varepsilon_{\text{f64}} \approx 2.22 \times 10^{-16}$).
     \item \textbf{QR (\texttt{DSTEV / DSTEQR}):} El algoritmo QR implícito para matrices tridiagonales simétricas de \texttt{DSTEQR} de \texttt{LAPACK} \cite{lapack}, que es exactamente la rutina QR utilizada como referencia en la Sección 6 de \cite{gu1995}, también en doble precisión \texttt{float64}.
 \end{itemize}
 
@@ -697,7 +696,7 @@ Finalmente, cabe destacar el motivo de la diferencia en los tiempos absolutos de
     Anderson, E., Bai, Z., Bischof, C., Demmel, J., Dongarra, J., Du Croz, J., Greenbaum, A., Hammarling, S., McKenney, A., Ostrouchov, S., \& Sorensen, D. (1992). \rm{LAPACK Users' Guide}. Society for Industrial and Applied Mathematics (SIAM), Philadelphia, PA.
     \bibitem{ExactSum}
     Zhu, Y.-K. and Hayes, W. B. (2010). \rm{Algorithm 908: Online exact summation of ﬂoating-point streams}. ACM Trans. Math. Softw. 37, 3, Article 37 (September 2010), 13 pages.\\
-    DOI = 10.1145/1824801.182481\ref{https://dl.acm.org/doi/epdf/10.1145/1824801.1824815}{http://doi.acm.org/10.1145/1824801.1824815.}
+    DOI = 10.1145/1824801.1824815 \href{https://dl.acm.org/doi/epdf/10.1145/1824801.1824815}{http://doi.acm.org/10.1145/1824801.1824815}.
 
     \bibitem{gu1994}
     Gu, M., \& Eisenstat, S. C. (1994). \rm{A stable and efficient algorithm for the rank-one modification of the symmetric eigen-problem}. SIAM J. Matrix Anal. Appl., 15, pp. 1266-1276.

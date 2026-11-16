@@ -6,3 +6,6 @@ Como pueden ver desde los archivos measure_X.pi, estos llaman a test_matrices.py
 
 measure_own_ADC.py llama a proyecto.py, que sería el archivo principal que desencadena en los otros archivos para resolver cada parte del algoritmo, como describen los nombres de los archivos/funciones.
 
+Si quieren ver la función principal que devuelve la diagonalización, esta está justamente en proyecto.py y se llama DnC_SimTridiag, pero igualmente recomendamos solo usar los archivos de measure_own_ADC.py etc.
+
+La función DnC_SimTridiag recibe una matriz cuadrada simétrica tridiagonal A, y opcionalmente, la tolerancia utilizada para la deflación (más específicamente, el eta múltiplo de épsilon). Devuelve el par D, Q, que cumplen A = Q D Q^T, con Q unitaria y D diagonal.
