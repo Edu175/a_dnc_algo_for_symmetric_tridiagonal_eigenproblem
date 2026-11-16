@@ -133,7 +133,6 @@ autovalores de una simétrica tridiagonal},
     
     % Bloque de título principal
     \noindent{\color{AccentColor}\rule{\linewidth}{2pt}}\\[0.6cm]
-    {\small\bfseries{\MakeUppercase{Informe}}}\\[0.4cm]
     {\Huge\bfseries\color{PrimaryColor} Divide y vencerás: Un algoritmo para el problema de
 autovalores}\\[0.5cm]
     {\Large\color{TextMuted} Diagonalización Numérica de matrices Simétricas Tridiagonales}\\[0.4cm]
@@ -161,9 +160,9 @@ autovalores}\\[0.5cm]
 
 \begin{calloutbox}
     % Este espacio está diseñado para sintetizar en 1 o 2 párrafos el propósito del informe, la metodología empleada, los hallazgos principales y las recomendaciones clave. Debe permitir al lector comprender el valor del documento sin necesidad de leerlo en su totalidad.
-    En este informe veremos cómo Diagonalizar una matriz tridiagonal $T \in \R^{N \times N}$, con complejidad temporal $O(N^2\rm{log^2}(\frac1\varepsilon))$ con el algoritmo presentado en \cite{gu1995}, con un error numérico $O(N \varepsilon \| T\|_2 )$, detalles de implementación sobre el redondeo y complejidades finales tanto de error numérico como de complejidad temporal.\\
+    En este informe veremos cómo Diagonalizar una matriz tridiagonal $T \in \R^{N \times N}$, con complejidad temporal $O(N^2\rm{log^2}(\frac1\varepsilon))$ con el algoritmo presentado en \cite{gu1995}, con un error numérico $O(N \varepsilon \| T\|_2 )$, con detalles de implementación sobre el redondeo y complejidades finales tanto de error numérico como de complejidad temporal.\\
     
-    Finalmente, con una implementación hecha en python, con peor cota temporal por simplicidad, compararemos las aproximaciones de los autovectores hechos por nuestra implementación contra las presentadas en \cite{gu1995} y con una implementación propia de $QR$.
+    Finalmente, con una implementación hecha en python, con peor cota temporal por simplicidad, compararemos las aproximaciones de los autovectores hechos por nuestra implementación contra las presentadas en \cite{gu1995}.
 
 
 
@@ -311,12 +310,12 @@ Y el siguiente lema nos permite reconstruir una matriz flecha simétrica $\hat{H
 
 \subsection{Computar los autovalores}
 
-Dado que $\lambda_i \in (d_i, d_{i+1})$ para $2\leq i \leq N-1$, y $\lambda_1 \in \left(d_2-\|z\|_2 -\mid \alpha \mid , d_2 \right) $ y $\lambda_N \in \left(d_N, d_N+\|z\|_2 +\mid \alpha \mid \right)$, podemos usar cualquier método numérico de búsqueda de raíces para hallar las raíces de la ecuación secular $f$. En el caso de nuestro algoritmo implementamos bisección, en el artículo \cite{gu1995} presenta mejores métodos más eficientes numéricamente para hallar los $\lambda_i$. \\
+Dado que $\lambda_i \in (d_i, d_{i+1})$ para $2\leq i \leq N-1$, $\lambda_1 \in \left(d_2-\|z\|_2 -\mid \alpha \mid , d_2 \right) $ y $\lambda_N \in \left(d_N, d_N+\|z\|_2 +\mid \alpha \mid \right)$, podemos usar cualquier método numérico de búsqueda de raíces para hallar las raíces de la ecuación secular $f$. En el caso de nuestro algoritmo implementamos bisección, en el artículo \cite{gu1995} presenta mejores métodos más eficientes numéricamente para hallar los $\lambda_i$. \\
 
 En la búsqueda de los autovalores, para mejorar la precisión, buscamos el $i$-ésimo autovalor $\lambda_i=d_{c_i}+\mu_i$ buscando a $\mu_i$ raíz de:
 $$g_i(\mu):=f(\mu+d_{c_i})\equiv \mu +\alpha_i +\psi_i(\mu) + \phi_i(\mu)$$
 donde $c_i$ es el índice $r$ que minimiza $\mid d_r - \lambda_i \mid$, $\alpha_i=d_{c_i}-\alpha$.  $\psi_i$ y $\phi_i$ son los términos negativos y positivos, respectivamente, de la sumatoria de $(3)$, separados así para reducir error numérico al ser cada uno sumas del mismo signo. El valor de $c_i$ se puede decidir de la siguiente forma:\\
-
+\small
 $$c_i=\begin{cases} 
     2 & \texttt{ si $i=1$}\\
     N & \texttt{ si $i=N$}\\
@@ -324,11 +323,11 @@ $$c_i=\begin{cases}
     i+1 & \texttt{ caso contrario}
 \end{cases}$$
 
-ahora, como $\psi_i$ y $\phi_i$ son sumas del mismo signo, podemos acotar el error de computar $g_i(\mu)$ por:
+\normalsize ahora, como $\psi_i$ y $\phi_i$ son sumas del mismo signo, podemos acotar el error de computar $g_i(\mu)$ por:
 
 $$\eta E_{\small\rm{suma}}(N) \left(\mid \mu \mid+ \mid \alpha_i \mid+ \mid \psi_i(\mu) \mid + \mid \phi_i(\mu) \mid\right)$$
 
-Donde $\eta$ es un múltiplo pequeño de $\varepsilon$ independiente de $N$ y $\mu$, y $E_{\small\rm{suma}}(N)$ es el error de sumar $N$ términos en una suma del mismo signo de punto flotante, por lo que $E_{\small\rm{suma}}(N) = O(N)$ si se suma de forma naive elemento a elemento, $O(log(N))$ si se usa un arbol binario para evaluar (es decir, otro \textit{DnC} sobre el arreglo de sumandos), o sino $O(1)$ si se usan métodos más sostificados (\cite{ExactSum}).\\
+Donde $\eta$ es un múltiplo pequeño de $\varepsilon$ independiente de $N$ y $\mu$, y $E_{\small\rm{suma}}(N)$ es el error de sumar $N$ términos en una suma del mismo signo de punto flotante, por lo que $E_{\small\rm{suma}}(N) = O(N)$ si se suma de forma \textit{naive} elemento a elemento, $O(\rm{log}(N))$ si se usa un arbol binario para evaluar (es decir, otro \textit{DnC} sobre el arreglo de sumandos), o sino $O(1)$ si se usan métodos más sostificados (\cite{ExactSum}).\\
 
 Como el método de encontrar raíces puede demorarse mucho debido a la imposibilidad de decidir el signo de $g_i$, el artículo \cite{gu1995} propone el \textit{stop criterion}, que finalice la búsqueda si se encuentra un $\mu$ tal que:
 $$\mid g_i (\mu) \mid \leq \eta E_{\small\rm{suma}}(N) \left(\mid \mu \mid+ \mid \alpha_i \mid+ \mid \psi_i(\mu) \mid + \mid \phi_i(\mu) \mid\right)$$
@@ -497,7 +496,7 @@ $$= O\left(N^2\rm{log}^2\left( \frac1\varepsilon\right)\right)\Sum_{m=1}^{O(\rm{
 Por lo que la complejidad final es $O\left(N^2\rm{log}^2\left( \frac1\varepsilon\right)\right)$ usando FMM.
 
 En nuestra implementación el factor que domina es nuevamente calcular $\Phi_1$, que pasa de ser $O\left(n\rm{log}^2\left( \frac1\varepsilon\right)\right)$ a $O\left(n^2\right)$ con \texttt{np.sum}, así que el conteo operacional es simplemente $O(N^3)$, que se puede ver de forma análoga.\\
-    El error acumulado es $O(N\varepsilon \|T\|_2)$ por las $n$ deflaciones que son las más pesadas $O(\tau \|T\|_2)= O(N\varepsilon \|T\|_2)$ con FMM o con \cite{ExactSum}, sino será $O(N E_{\small\rm{suma}}(N) \varepsilon \|T\|_2)$, en nuestro caso es $O(N \rm{log}(N) \varepsilon \|T\|_2)$ en nuestra implementación.
+    El error acumulado es $O(N\varepsilon \|T\|_2)$ por las $n$ deflaciones que son las más pesadas $O(\tau \|T\|_2)= O(N\varepsilon \|T\|_2)$ con FMM o con \cite{ExactSum}, sino será $O(N E_{\small\rm{suma}}(N) \varepsilon \|T\|_2)$. En nuestra implementación es $O(N \rm{log}(N) \varepsilon \|T\|_2)$.
 
 
 
